@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sahabhavana Township — Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════
+   DESIGN TOKENS — Light, high-contrast, professional
+══════════════════════════════════════════════════ */
+:root {
+  --bg:        #f0f2f7;
+  --surface:   #ffffff;
+  --surface2:  #f7f8fc;
+  --border:    #e2e6ef;
+  --border2:   #d0d6e8;
+
+  --text:      #111827;
+  --text2:     #374151;
+  --muted:     #6b7280;
+  --muted2:    #9ca3af;
+
+  --accent:    #2563eb;
+  --accent-h:  #1d4ed8;
+  --accent-lt: #eff6ff;
+  --accent-lt2:#dbeafe;
+
+  --success:   #059669;
+  --success-lt:#ecfdf5;
+  --warn:      #d97706;
+  --warn-lt:   #fffbeb;
+  --danger:    #dc2626;
+  --danger-lt: #fef2f2;
+  --purple:    #7c3aed;
+  --purple-lt: #f5f3ff;
+
+  --radius:    10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:    0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.06);
+
+  --font:  'Plus Jakarta Sans', sans-serif;
+  --mono:  'JetBrains Mono', monospace;
+
+  --sidebar-w: 236px;
+}
+
+/* ══════════════════════════════════════════════════
+   RESET
+══════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:var(--font);}
+input,select,textarea{font-family:var(--font);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+
+/* ══════════════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════════════ */
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;
+  z-index:100;transition:transform .25s cubic-bezier(.4,0,.2,1);
+}
+.sidebar-brand{
+  padding:18px 16px 14px;
+  border-bottom:1px solid var(--border);
+}
+.brand-row{display:flex;align-items:center;gap:10px;}
+.brand-icon{
+  width:38px;height:38px;background:var(--accent);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.brand-name{font-size:13.5px;font-weight:700;color:var(--text);line-height:1.2;}
+.brand-sub{font-size:10.5px;color:var(--muted);margin-top:1px;}
+
+.sidebar-nav{flex:1;overflow-y:auto;padding:10px 10px;}
+.nav-section{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;padding:12px 8px 4px;margin-top:2px;}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:8px;
+  color:var(--muted);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .12s;margin-bottom:1px;
+  position:relative;
+}
+.nav-item:hover{background:var(--surface2);color:var(--text2);}
+.nav-item.active{background:var(--accent-lt);color:var(--accent);font-weight:600;}
+.nav-item.active .nav-icon{opacity:1;}
+.nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;background:var(--danger);color:#fff;
+  font-size:10px;font-weight:700;padding:1px 5px;border-radius:99px;min-width:16px;text-align:center;
+}
+.nav-badge.warn{background:var(--warn);}
+.nav-badge.blue{background:var(--accent);}
+
+.sidebar-footer{padding:10px;border-top:1px solid var(--border);}
+.user-card{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:8px;background:var(--surface2);cursor:pointer;
+}
+.user-avatar{
+  width:30px;height:30px;background:var(--accent);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.user-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:10.5px;color:var(--accent);}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;}
+.sidebar-overlay.open{display:block;}
+
+/* ══════════════════════════════════════════════════
+   MAIN
+══════════════════════════════════════════════════ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 20px;height:54px;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  flex-shrink:0;position:relative;z-index:50;
+}
+.topbar-menu{display:none;background:none;border:none;font-size:18px;color:var(--text);padding:4px;}
+.topbar-title{font-size:15px;font-weight:700;flex:1;color:var(--text);}
+.topbar-badge{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;
+}
+.topbar-emergency{background:var(--danger-lt);color:var(--danger);border:1px solid rgba(220,38,38,.2);}
+.topbar-emergency:hover{background:#fee2e2;}
+.topbar-helpline{background:var(--success-lt);color:var(--success);border:1px solid rgba(5,150,105,.2);font-size:11.5px;}
+.pulse{width:7px;height:7px;background:currentColor;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.3);}}
+
+.topbar-icon-btn{
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;border:1px solid var(--border);background:var(--surface2);
+  cursor:pointer;font-size:15px;position:relative;color:var(--text2);
+}
+.topbar-icon-btn:hover{background:var(--border);}
+.badge-dot{
+  position:absolute;top:5px;right:5px;width:8px;height:8px;
+  background:var(--danger);border-radius:50%;border:2px solid var(--surface);
+}
+
+.content{flex:1;overflow-y:auto;padding:20px;}
+
+/* ══════════════════════════════════════════════════
+   PAGES
+══════════════════════════════════════════════════ */
+.page{display:none;animation:pageIn .18s ease;}
+.page.active{display:block;}
+@keyframes pageIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+
+.page-header{margin-bottom:18px;}
+.page-header h1{font-size:20px;font-weight:800;color:var(--text);}
+.page-header p{color:var(--muted);font-size:13px;margin-top:2px;}
+
+/* ══════════════════════════════════════════════════
+   CARDS
+══════════════════════════════════════════════════ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-sm);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-size:14px;font-weight:700;color:var(--text);}
+.card-sub{font-size:12px;color:var(--muted);}
+
+/* ══════════════════════════════════════════════════
+   STATS
+══════════════════════════════════════════════════ */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:18px;}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px 18px;position:relative;overflow:hidden;cursor:default;
+  box-shadow:var(--shadow-sm);transition:box-shadow .15s,transform .15s;
+}
+.stat-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.stat-label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.stat-icon-wrap{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.stat-value{font-size:26px;font-weight:800;line-height:1;color:var(--text);}
+.stat-meta{font-size:11px;color:var(--muted);margin-top:4px;}
+.stat-trend{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:600;margin-top:3px;}
+.trend-up{color:var(--success);}
+.trend-dn{color:var(--danger);}
+
+/* ══════════════════════════════════════════════════
+   GRIDS
+══════════════════════════════════════════════════ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.mb14{margin-bottom:14px;}
+.mb18{margin-bottom:18px;}
+
+/* ══════════════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;
+  border:none;transition:all .12s;white-space:nowrap;cursor:pointer;
+}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-h);}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:#b91c1c;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-success:hover{background:#047857;}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--border);}
+.btn-warn{background:var(--warn);color:#fff;}
+.btn-warn:hover{background:#b45309;}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px;}
+.btn-xs{padding:3px 8px;font-size:11px;border-radius:5px;}
+.btn-icon{padding:6px;border-radius:7px;}
+
+/* ══════════════════════════════════════════════════
+   FORMS
+══════════════════════════════════════════════════ */
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;}
+.form-control{
+  width:100%;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:8px;padding:8px 11px;color:var(--text);font-size:13.5px;
+  outline:none;transition:border-color .15s;
+}
+.form-control:focus{border-color:var(--accent);background:#fff;}
+.form-control::placeholder{color:var(--muted2);}
+select.form-control option{background:#fff;color:var(--text);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+textarea.form-control{resize:vertical;min-height:70px;}
+
+/* ══════════════════════════════════════════════════
+   BADGES
+══════════════════════════════════════════════════ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap;}
+.b-open{background:var(--accent-lt2);color:var(--accent);}
+.b-assigned{background:var(--warn-lt);color:var(--warn);}
+.b-inprog{background:var(--purple-lt);color:var(--purple);}
+.b-done{background:var(--success-lt);color:var(--success);}
+.b-closed{background:#f3f4f6;color:var(--muted);}
+.b-emergency{background:var(--danger-lt);color:var(--danger);border:1px solid rgba(220,38,38,.2);}
+.b-high{background:#fff7ed;color:#c2410c;}
+.b-medium{background:var(--warn-lt);color:var(--warn);}
+.b-low{background:var(--success-lt);color:var(--success);}
+
+/* ══════════════════════════════════════════════════
+   TABLES
+══════════════════════════════════════════════════ */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-lg);}
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{
+  text-align:left;padding:10px 14px;font-size:11px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.5px;
+  background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.tbl th:first-child{border-radius:var(--radius) 0 0 0;}
+.tbl th:last-child{border-radius:0 var(--radius) 0 0;}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;color:var(--text2);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tbody tr:hover td{background:var(--accent-lt);}
+.tbl tbody tr{cursor:pointer;}
+.ticket-id{font-family:var(--mono);font-size:11.5px;color:var(--accent);background:var(--accent-lt);padding:2px 6px;border-radius:4px;font-weight:600;}
+
+/* ══════════════════════════════════════════════════
+   SEARCH + FILTER
+══════════════════════════════════════════════════ */
+.search-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:8px;padding:7px 11px;
+}
+.search-bar:focus-within{border-color:var(--accent);background:#fff;}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-size:13.5px;flex:1;}
+.search-bar input::placeholder{color:var(--muted2);}
+.search-icon{color:var(--muted);font-size:14px;}
+
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.chip{
+  padding:5px 12px;border-radius:99px;font-size:12px;font-weight:600;
+  border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .12s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.chip.chip-danger.active{background:var(--danger);border-color:var(--danger);}
+
+/* ══════════════════════════════════════════════════
+   HEATMAP
+══════════════════════════════════════════════════ */
+.heatmap{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.tower-cell{
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surface2);
+}
+.tower-cell:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.tower-cell .t-name{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.tower-cell .t-count{font-size:22px;font-weight:800;line-height:1.1;margin:4px 0 2px;}
+.tower-cell .t-sub{font-size:10px;color:var(--muted);}
+.heat0{border-color:rgba(5,150,105,.3);background:#f0fdf4;} .heat0 .t-count{color:var(--success);}
+.heat1{border-color:rgba(217,119,6,.3);background:#fffbeb;} .heat1 .t-count{color:var(--warn);}
+.heat2{border-color:rgba(234,88,12,.4);background:#fff7ed;} .heat2 .t-count{color:#ea580c;}
+.heat3{border-color:rgba(220,38,38,.4);background:#fef2f2;} .heat3 .t-count{color:var(--danger);}
+
+/* ══════════════════════════════════════════════════
+   CHART BARS
+══════════════════════════════════════════════════ */
+.chart-wrap{position:relative;height:140px;display:flex;align-items:flex-end;gap:5px;padding:0 2px 22px;}
+.bar{flex:1;border-radius:5px 5px 0 0;transition:height .4s;position:relative;cursor:pointer;}
+.bar:hover{filter:brightness(1.08);}
+.bar-tip{
+  display:none;position:absolute;bottom:calc(100%+5px);left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;font-size:11px;padding:3px 7px;border-radius:5px;white-space:nowrap;z-index:10;
+}
+.bar:hover .bar-tip{display:block;}
+.chart-labels{position:absolute;bottom:0;left:2px;right:2px;display:flex;gap:5px;}
+.chart-label{flex:1;text-align:center;font-size:10px;color:var(--muted);}
+.bar-blue{background:linear-gradient(180deg,var(--accent),#93c5fd);}
+.bar-green{background:linear-gradient(180deg,var(--success),#6ee7b7);}
+
+/* ══════════════════════════════════════════════════
+   PROGRESS
+══════════════════════════════════════════════════ */
+.prog-bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .4s;}
+.prog-success{background:var(--success);}
+.prog-warn{background:var(--warn);}
+.prog-danger{background:var(--danger);}
+
+.sla-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:3px;}
+.sla-fill{height:100%;border-radius:99px;}
+.sla-ok{background:var(--success);}
+.sla-warn{background:var(--warn);}
+.sla-over{background:var(--danger);animation:sla-blink .8s infinite alternate;}
+@keyframes sla-blink{from{opacity:1;}to{opacity:.4;}}
+
+/* ══════════════════════════════════════════════════
+   ACTIVITY FEED
+══════════════════════════════════════════════════ */
+.activity-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.a-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.a-text{font-size:12.5px;color:var(--text2);line-height:1.4;}
+.a-text strong{color:var(--accent);font-weight:600;}
+.a-time{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ══════════════════════════════════════════════════
+   EMERGENCY BANNER
+══════════════════════════════════════════════════ */
+.emer-banner{
+  display:flex;align-items:center;gap:12px;
+  background:var(--danger-lt);border:1.5px solid rgba(220,38,38,.25);
+  border-radius:var(--radius-lg);padding:13px 16px;margin-bottom:16px;
+}
+.emer-icon-wrap{
+  width:40px;height:40px;background:rgba(220,38,38,.12);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+}
+.emer-text h4{font-size:13.5px;font-weight:700;color:var(--danger);}
+.emer-text p{font-size:12px;color:var(--muted);margin-top:1px;}
+.emer-actions{margin-left:auto;display:flex;gap:7px;flex-shrink:0;}
+
+/* ══════════════════════════════════════════════════
+   STAFF CARDS
+══════════════════════════════════════════════════ */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+.staff-card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px;text-align:center;transition:all .15s;box-shadow:var(--shadow-sm);
+}
+.staff-card:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-2px);}
+.staff-av{
+  width:46px;height:46px;border-radius:12px;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;
+}
+.staff-name{font-size:14px;font-weight:700;}
+.staff-role{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.staff-metrics{display:flex;justify-content:center;gap:12px;}
+.sm-val{font-size:16px;font-weight:800;}
+.sm-lbl{font-size:10px;color:var(--muted);}
+.status-dot{display:inline-flex;align-items:center;gap:5px;font-size:11px;margin-top:7px;}
+.dot{width:6px;height:6px;border-radius:50%;}
+.dot-green{background:var(--success);}
+.dot-gray{background:var(--muted2);}
+.dot-warn{background:var(--warn);}
+
+/* ══════════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════════ */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  backdrop-filter:blur(3px);z-index:1000;align-items:center;justify-content:center;padding:16px;
+}
+.overlay.open{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);
+  width:100%;max-width:600px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow-lg);animation:modalIn .2s ease;
+}
+.modal-sm{max-width:420px;}
+@keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(6px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{
+  width:28px;height:28px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--muted);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;font-weight:700;
+}
+.modal-close:hover{background:var(--border);}
+.modal-body{padding:18px 20px;}
+.modal-ftr{display:flex;gap:8px;padding:13px 20px;border-top:1px solid var(--border);justify-content:flex-end;}
+
+/* ══════════════════════════════════════════════════
+   TICKET META
+══════════════════════════════════════════════════ */
+.ticket-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.tmg-item{background:var(--surface2);border-radius:8px;padding:10px 12px;}
+.tmg-lbl{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;}
+.tmg-val{font-size:13px;font-weight:600;color:var(--text);}
+
+.tl-item{display:flex;gap:10px;margin-bottom:10px;}
+.tl-line{display:flex;flex-direction:column;align-items:center;}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.tl-connector{width:1.5px;flex:1;background:var(--border);margin:2px 0;}
+.tl-body{flex:1;padding-bottom:4px;}
+.tl-action{font-size:13px;font-weight:600;color:var(--text);}
+.tl-detail{font-size:11.5px;color:var(--muted);margin-top:1px;}
+
+/* ══════════════════════════════════════════════════
+   WHATSAPP FLOW
+══════════════════════════════════════════════════ */
+.wa-step{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--success);}
+.wa-num{width:20px;height:20px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.wa-step strong{display:block;font-size:13px;color:var(--text);margin-bottom:2px;}
+.wa-step span{font-size:12px;color:var(--muted);}
+
+/* ══════════════════════════════════════════════════
+   NOTIFICATION PANEL
+══════════════════════════════════════════════════ */
+.notif-panel{
+  position:fixed;top:54px;right:0;width:310px;
+  background:var(--surface);border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+  border-radius:0 0 0 var(--radius-lg);box-shadow:var(--shadow-lg);
+  z-index:200;max-height:calc(100vh - 54px);overflow-y:auto;display:none;
+  animation:slideLeft .2s ease;
+}
+.notif-panel.open{display:block;}
+@keyframes slideLeft{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}
+.notif-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);}
+.notif-hdr-title{font-size:13px;font-weight:700;}
+.notif-item{display:flex;gap:9px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.notif-item:hover{background:var(--surface2);}
+.notif-item.unread{background:var(--accent-lt);}
+.notif-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
+.notif-title{font-size:13px;font-weight:600;}
+.notif-desc{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.notif-time{font-size:11px;color:var(--muted2);margin-top:2px;}
+
+/* ══════════════════════════════════════════════════
+   QUICK BUTTONS (Resident Portal)
+══════════════════════════════════════════════════ */
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:18px;}
+.quick-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:16px 10px;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);cursor:pointer;transition:all .15s;text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.quick-btn:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow);}
+.quick-btn.emergency{border-color:rgba(220,38,38,.4);background:#fef2f2;}
+.quick-btn.emergency:hover{background:var(--danger-lt);}
+.q-icon{font-size:26px;}
+.q-label{font-size:12.5px;font-weight:700;color:var(--text);}
+.q-sub{font-size:10.5px;color:var(--muted);}
+
+/* ══════════════════════════════════════════════════
+   SETTINGS ROWS
+══════════════════════════════════════════════════ */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:13px;font-weight:600;color:var(--text);}
+.setting-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.toggle{
+  width:40px;height:22px;background:var(--border2);border-radius:99px;
+  position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;
+}
+.toggle.on{background:var(--accent);}
+.toggle::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:18px;height:18px;background:#fff;border-radius:50%;
+  transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.toggle.on::after{transform:translateX(18px);}
+
+/* ══════════════════════════════════════════════════
+   INTEGRATION STATUS
+══════════════════════════════════════════════════ */
+.integ-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:8px;
+}
+.integ-icon{font-size:22px;flex-shrink:0;}
+.integ-label{font-size:13px;font-weight:600;}
+.integ-sub{font-size:11.5px;color:var(--muted);}
+.integ-status{margin-left:auto;flex-shrink:0;}
+
+/* ══════════════════════════════════════════════════
+   REPORT METRICS
+══════════════════════════════════════════════════ */
+.report-metric{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.report-metric:last-child{border-bottom:none;}
+.rm-label{font-size:13px;color:var(--text2);}
+.rm-val{font-size:14px;font-weight:700;font-family:var(--mono);}
+
+/* ══════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════ */
+.toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999;}
+.toast{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:11px 15px;display:flex;align-items:center;gap:9px;
+  box-shadow:var(--shadow-lg);font-size:13px;min-width:230px;max-width:320px;
+  animation:toastIn .2s ease;border-left:3px solid var(--success);
+}
+.toast.error{border-left-color:var(--danger);}
+.toast.warn{border-left-color:var(--warn);}
+.toast.info{border-left-color:var(--accent);}
+@keyframes toastIn{from{opacity:0;transform:translateX(15px);}to{opacity:1;transform:translateX(0);}}
+
+/* ══════════════════════════════════════════════════
+   DONUT
+══════════════════════════════════════════════════ */
+.donut-wrap{display:flex;align-items:center;gap:18px;margin-top:10px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.leg-val{font-weight:700;font-family:var(--mono);margin-left:auto;padding-left:10px;}
+
+/* ══════════════════════════════════════════════════
+   LOADING STATE
+══════════════════════════════════════════════════ */
+.loading-row td{text-align:center;padding:30px;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-right:7px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:36px;margin-bottom:8px;}
+.empty-text{font-size:14px;font-weight:600;color:var(--text2);}
+.empty-sub{font-size:12.5px;color:var(--muted);margin-top:3px;}
+
+/* ══════════════════════════════════════════════════
+   HELPLINE CARD
+══════════════════════════════════════════════════ */
+.helpline-hero{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(135deg,var(--success-lt),#d1fae5);
+  border:1.5px solid rgba(5,150,105,.2);border-radius:var(--radius-lg);
+  padding:14px 18px;margin-bottom:16px;
+}
+.helpline-number{font-size:20px;font-weight:800;color:var(--success);font-family:var(--mono);}
+
+.incoming-card{background:var(--surface2);border-radius:var(--radius);padding:12px 14px;border-left:3px solid var(--border);margin-bottom:8px;}
+.incoming-card.emer{border-left-color:var(--danger);}
+.incoming-card.wa{border-left-color:var(--success);}
+.incoming-card.missed{border-left-color:var(--accent);}
+.incoming-card.web{border-left-color:var(--warn);}
+
+/* ══════════════════════════════════════════════════
+   RESIDENT HERO
+══════════════════════════════════════════════════ */
+.resident-hero{
+  background:linear-gradient(135deg,var(--accent-lt2),var(--accent-lt));
+  border:1.5px solid rgba(37,99,235,.2);border-radius:var(--radius-xl);
+  padding:24px;text-align:center;margin-bottom:18px;
+}
+.resident-hero h2{font-size:20px;font-weight:800;}
+.resident-hero p{font-size:13px;color:var(--muted);margin:4px 0 12px;}
+
+/* ══════════════════════════════════════════════════
+   EMERGENCY CARDS
+══════════════════════════════════════════════════ */
+.emer-card{
+  background:var(--surface);border:2px solid rgba(220,38,38,.35);
+  border-radius:var(--radius-xl);padding:18px 20px;margin-bottom:14px;
+  box-shadow:0 4px 20px rgba(220,38,38,.08);
+}
+.emer-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.emer-av{width:44px;height:44px;background:var(--danger-lt);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.emer-timer{font-size:20px;font-weight:800;color:var(--danger);font-family:var(--mono);}
+.emer-body{font-size:13px;color:var(--muted);margin-bottom:12px;}
+.emer-actions{display:flex;gap:7px;flex-wrap:wrap;}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%);box-shadow:var(--shadow-lg);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay.open{display:block;}
+  .topbar-menu{display:flex;}
+  .topbar-helpline{display:none;}
+  .g2,.g3{grid-template-columns:1fr;}
+  .form-row,.form-row3{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .heatmap{grid-template-columns:repeat(3,1fr);}
+  .tbl th:nth-child(n+5),.tbl td:nth-child(n+5){display:none;}
+  .content{padding:14px;}
+  .notif-panel{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── SIDEBAR ─────────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-row">
+      <div class="brand-icon">🏘️</div>
+      <div>
+        <div class="brand-name" id="brandName">SAHABHAVANA</div>
+        <div class="brand-sub">Command Center CRM</div>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="go('dashboard',this)"><span class="nav-icon">📊</span>Dashboard</div>
+    <div class="nav-item" onclick="go('helpline',this)"><span class="nav-icon">📞</span>Helpline<span class="nav-badge warn" id="nb-helpline">3</span></div>
+    <div class="nav-item" onclick="go('tickets',this)"><span class="nav-icon">🎫</span>Tickets<span class="nav-badge" id="nb-tickets">—</span></div>
+    <div class="nav-item" onclick="go('emergency',this)"><span class="nav-icon">🚨</span>Emergencies<span class="nav-badge" id="nb-emergency">2</span></div>
+    <div class="nav-section">Management</div>
+    <div class="nav-item" onclick="go('staff',this)"><span class="nav-icon">👷</span>Staff</div>
+    <div class="nav-item" onclick="go('residents',this)"><span class="nav-icon">🏠</span>Residents</div>
+    <div class="nav-item" onclick="go('notifications',this)"><span class="nav-icon">🔔</span>Notifications<span class="nav-badge blue">5</span></div>
+    <div class="nav-section">Analytics</div>
+    <div class="nav-item" onclick="go('reports',this)"><span class="nav-icon">📈</span>Reports</div>
+    <div class="nav-item" onclick="go('sla',this)"><span class="nav-icon">⏱️</span>SLA Monitor</div>
+    <div class="nav-section">Setup</div>
+    <div class="nav-item" onclick="go('whatsapp',this)"><span class="nav-icon">💬</span>WhatsApp Bot</div>
+    <div class="nav-item" onclick="go('settings',this)"><span class="nav-icon">⚙️</span>Settings</div>
+    <div class="nav-item" onclick="go('portal',this)"><span class="nav-icon">📱</span>Resident Portal</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" id="userAv">AD</div>
+      <div>
+        <div class="user-name" id="userName">Admin</div>
+        <div class="user-role" id="userRole">⚡ Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ── MAIN ────────────────────────────────────────────── -->
+<main class="main">
+  <header class="topbar">
+    <button class="topbar-menu" onclick="toggleSidebar()">☰</button>
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-badge topbar-emergency" onclick="go('emergency',null)" id="topbarEmer">
+      <span class="pulse"></span> <span id="emerCount">2</span> Emergencies
+    </div>
+    <div class="topbar-badge topbar-helpline" id="topbarHelp">📞 <span id="helplineDisplay">1800-PSR-HELP</span></div>
+    <div class="topbar-icon-btn" onclick="toggleNotif()">🔔<span class="badge-dot"></span></div>
+  </header>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-hdr">
+      <div class="notif-hdr-title">Notifications</div>
+      <button class="btn btn-ghost btn-sm" onclick="toggleNotif()">Close</button>
+    </div>
+    <div class="notif-item unread"><div class="notif-icon">🚨</div><div><div class="notif-title">Water leakage — B-401</div><div class="notif-desc">Emergency via WhatsApp</div><div class="notif-time">2 min ago</div></div></div>
+    <div class="notif-item unread"><div class="notif-icon">⏰</div><div><div class="notif-title">SLA Breach — TKT-0089</div><div class="notif-desc">Lift complaint overdue by 3h</div><div class="notif-time">18 min ago</div></div></div>
+    <div class="notif-item unread"><div class="notif-icon">📞</div><div><div class="notif-title">Missed call — +91 98765 43210</div><div class="notif-desc">Auto-WhatsApp triggered</div><div class="notif-time">31 min ago</div></div></div>
+    <div class="notif-item"><div class="notif-icon">✅</div><div><div class="notif-title">TKT-0085 Closed</div><div class="notif-desc">Power backup resolved</div><div class="notif-time">1 hr ago</div></div></div>
+    <div class="notif-item"><div class="notif-icon">💬</div><div><div class="notif-title">WhatsApp ticket — E-202</div><div class="notif-desc">Security complaint raised</div><div class="notif-time">2 hr ago</div></div></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content">
+
+    <!-- ═══════ DASHBOARD ═══════════════════════════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1>Command Center</h1>
+        <p id="dash-sub">Loading township data...</p>
+      </div>
+      <div class="emer-banner" id="emerBanner">
+        <div class="emer-icon-wrap">🚨</div>
+        <div class="emer-text">
+          <h4 id="emerBannerTitle">2 Active Emergencies</h4>
+          <p id="emerBannerSub">Loading...</p>
+        </div>
+        <div class="emer-actions">
+          <button class="btn btn-danger btn-sm" onclick="go('emergency',null)">View All</button>
+          <button class="btn btn-ghost btn-sm" onclick="openAssignModal(null)">Assign</button>
+        </div>
+      </div>
+      <div class="stats-grid" id="dashStats">
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Open Tickets</div><div class="stat-icon-wrap" style="background:#fef2f2">🎫</div></div><div class="stat-value" id="s-open" style="color:var(--danger)">—</div><div class="stat-meta">Active complaints</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">In Progress</div><div class="stat-icon-wrap" style="background:#fff7ed">⚡</div></div><div class="stat-value" id="s-inprog" style="color:var(--warn)">—</div><div class="stat-meta">Being worked on</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Resolved Today</div><div class="stat-icon-wrap" style="background:var(--success-lt)">✅</div></div><div class="stat-value" id="s-done" style="color:var(--success)">—</div><div class="stat-meta stat-trend trend-up" id="s-done-meta">Today</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Calls Today</div><div class="stat-icon-wrap" style="background:var(--accent-lt2)">📞</div></div><div class="stat-value" id="s-calls" style="color:var(--accent)">—</div><div class="stat-meta">+WhatsApp</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Emergencies</div><div class="stat-icon-wrap" style="background:#fef2f2">🚨</div></div><div class="stat-value" id="s-emer" style="color:var(--danger)">—</div><div class="stat-meta">Active now</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Avg Resolution</div><div class="stat-icon-wrap" style="background:var(--accent-lt)">⏱️</div></div><div class="stat-value" id="s-avg" style="color:var(--accent)">—</div><div class="stat-meta">Target: 6h</div></div>
+      </div>
+      <div class="g2 mb14">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏗️ Tower Heatmap</div><div class="card-sub">Active complaints</div></div>
+          <div class="heatmap" id="towerHeatmap">
+            <div style="color:var(--muted);font-size:12px;grid-column:1/-1;text-align:center;padding:20px;">Loading towers...</div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--muted);">
+            <span>🟢 Clear</span><span>🟡 Low</span><span>🟠 Medium</span><span>🔴 High</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📈 Weekly Trend</div>
+            <select class="form-control" style="width:auto;padding:4px 8px;font-size:11px;" onchange="renderChart()"><option>Last 7 days</option><option>Last 30 days</option></select>
+          </div>
+          <div class="chart-wrap" id="weekChart"></div>
+          <div class="donut-wrap">
+            <svg width="78" height="78" viewBox="0 0 78 78">
+              <circle cx="39" cy="39" r="27" fill="none" stroke="var(--border)" stroke-width="13"/>
+              <circle cx="39" cy="39" r="27" fill="none" stroke="var(--danger)" stroke-width="13" stroke-dasharray="70 100" stroke-dashoffset="-7" transform="rotate(-90 39 39)"/>
+              <circle cx="39" cy="39" r="27" fill="none" stroke="var(--warn)" stroke-width="13" stroke-dasharray="28 142" stroke-dashoffset="-77" transform="rotate(-90 39 39)"/>
+              <circle cx="39" cy="39" r="27" fill="none" stroke="var(--success)" stroke-width="13" stroke-dasharray="58 112" stroke-dashoffset="-105" transform="rotate(-90 39 39)"/>
+              <text x="39" y="43" text-anchor="middle" fill="var(--text)" font-size="13" font-family="Plus Jakarta Sans" font-weight="800" id="donutTotal">38</text>
+            </svg>
+            <div>
+              <div class="legend-item"><span class="leg-dot" style="background:var(--danger)"></span>Open<span class="leg-val" id="l-open">—</span></div>
+              <div class="legend-item"><span class="leg-dot" style="background:var(--warn)"></span>In Progress<span class="leg-val" id="l-inprog">—</span></div>
+              <div class="legend-item"><span class="leg-dot" style="background:var(--success)"></span>Resolved<span class="leg-val" id="l-done">—</span></div>
+              <div class="legend-item"><span class="leg-dot" style="background:var(--muted2)"></span>Closed<span class="leg-val" id="l-closed">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔄 Live Activity</div><span style="font-size:11px;color:var(--success);font-weight:600;">● Live</span></div>
+          <div id="activityFeed">
+            <div style="color:var(--muted);font-size:12.5px;padding:12px 0;">Loading activity...</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">👷 Staff Performance</div><button class="btn btn-ghost btn-sm" onclick="go('staff',null)">View All</button></div>
+          <div id="staffPerf" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="color:var(--muted);font-size:12.5px;">Loading staff data...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ HELPLINE ════════════════════════════════ -->
+    <div class="page" id="page-helpline">
+      <div class="page-header"><h1>📞 Helpline Management</h1><p>Centralized call + WhatsApp intake</p></div>
+      <div class="helpline-hero">
+        <span style="font-size:24px;">📞</span>
+        <div>
+          <div class="helpline-number" id="helperlineNum">1800-PSR-HELP</div>
+          <div style="font-size:11.5px;color:var(--success);">Also on WhatsApp · 24×7</div>
+        </div>
+        <div style="margin-left:auto;text-align:right;">
+          <div style="font-size:11px;color:var(--muted);">Tickets today</div>
+          <div style="font-size:22px;font-weight:800;color:var(--accent);font-family:var(--mono);">34</div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">📋 Create Ticket</div></div>
+          <div class="form-group"><label class="form-label">Resident Name</label><input class="form-control" id="nt-name" placeholder="Full name"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Tower</label>
+              <select class="form-control" id="nt-tower" onchange="populateFlats('nt-tower','nt-flat')">
+                <option value="">Select Tower</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Flat No</label>
+              <select class="form-control" id="nt-flat"><option value="">Select Flat</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Issue Type</label>
+              <select class="form-control" id="nt-type">
+                <option>Plumbing</option><option>Electrical</option><option>Lift/Elevator</option>
+                <option>Security</option><option>Housekeeping</option><option>Structural</option>
+                <option>Gym/Amenities</option><option>Parking</option><option>Internet/Intercom</option>
+                <option>Emergency</option><option>Other</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Priority</label>
+              <select class="form-control" id="nt-priority">
+                <option>🔴 Emergency</option><option>🟠 High</option>
+                <option selected>🟡 Medium</option><option>🟢 Low</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Channel</label>
+            <select class="form-control" id="nt-channel">
+              <option>📞 Phone Call</option><option>💬 WhatsApp</option>
+              <option>🖥️ Walk-in</option><option>🌐 Web Portal</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Description</label>
+            <textarea class="form-control" id="nt-desc" placeholder="Describe the issue..."></textarea>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" style="flex:1;" onclick="createTicketFromForm()">✨ Create Ticket</button>
+            <button class="btn btn-danger" onclick="createEmergency()">🚨 Emergency</button>
+          </div>
+        </div>
+        <div>
+          <div class="card mb14">
+            <div class="card-header"><div class="card-title">📲 Recent Incoming</div><span class="badge b-open">Live</span></div>
+            <div>
+              <div class="incoming-card emer mb14">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:700;color:var(--danger);">🚨 Emergency Call</span><span style="font-size:11px;color:var(--muted);">2 min ago</span></div>
+                <div style="font-size:13px;font-weight:600;">+91 98765 43210 — Ramesh Kumar, B-401</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">Water pipe burst — auto-ticket pending</div>
+                <div style="margin-top:8px;display:flex;gap:6px;">
+                  <button class="btn btn-danger btn-sm" onclick="createEmergency()">🎫 Create Ticket</button>
+                  <button class="btn btn-ghost btn-sm" onclick="initiateCall('+919876543210')">📞 Call Back</button>
+                </div>
+              </div>
+              <div class="incoming-card wa mb14">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:700;color:var(--success);">💬 WhatsApp</span><span style="font-size:11px;color:var(--muted);">15 min ago</span></div>
+                <div style="font-size:13px;font-weight:600;">Priya Sharma — D-202</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">"Lift not working since morning" — Auto-ticketed ✓</div>
+                <div style="margin-top:5px;"><span class="ticket-id">TKT-0090</span></div>
+              </div>
+              <div class="incoming-card missed">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:700;color:var(--accent);">📞 Missed Call</span><span style="font-size:11px;color:var(--muted);">31 min ago</span></div>
+                <div style="font-size:13px;font-weight:600;">+91 90123 45678 — Unknown</div>
+                <div style="font-size:12px;color:var(--accent);margin-top:2px;">Auto-WhatsApp sent ✓</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">📊 Today's Stats</div></div>
+            <div class="stats-grid" style="margin-bottom:0;grid-template-columns:1fr 1fr;">
+              <div class="stat-card" style="border:1px solid var(--border);"><div class="stat-label">Calls</div><div class="stat-value" style="color:var(--accent);font-size:22px;">22</div></div>
+              <div class="stat-card" style="border:1px solid var(--border);"><div class="stat-label">WhatsApp</div><div class="stat-value" style="color:var(--success);font-size:22px;">12</div></div>
+              <div class="stat-card" style="border:1px solid var(--border);"><div class="stat-label">Missed</div><div class="stat-value" style="color:var(--warn);font-size:22px;">3</div></div>
+              <div class="stat-card" style="border:1px solid var(--border);"><div class="stat-label">Auto-Ticketed</div><div class="stat-value" style="color:var(--success);font-size:22px;">28</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TICKETS ═════════════════════════════════ -->
+    <div class="page" id="page-tickets">
+      <div class="page-header"><h1>🎫 Ticket Management</h1><p>Track, assign and resolve all complaints</p></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <div class="search-bar" style="flex:1;max-width:340px;">
+          <span class="search-icon">🔍</span>
+          <input placeholder="Search ticket, flat, name, issue..." oninput="filterTickets(this.value)" id="ticketSearch">
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="exportTickets()">⬇️ Export CSV</button>
+          <button class="btn btn-primary" onclick="go('helpline',null)">+ New Ticket</button>
+        </div>
+      </div>
+      <div class="filter-row" id="ticketFilters">
+        <div class="chip active" onclick="setTicketFilter('all',this)">All</div>
+        <div class="chip" onclick="setTicketFilter('Open',this)">Open</div>
+        <div class="chip" onclick="setTicketFilter('Assigned',this)">Assigned</div>
+        <div class="chip" onclick="setTicketFilter('In Progress',this)">In Progress</div>
+        <div class="chip" onclick="setTicketFilter('Completed',this)">Done</div>
+        <div class="chip chip-danger" onclick="setTicketFilter('emergency',this)">🔴 Emergency</div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="table-wrap">
+          <table class="tbl" id="ticketTable">
+            <thead>
+              <tr>
+                <th>Ticket ID</th><th>Resident / Flat</th><th>Issue</th>
+                <th>Priority</th><th>Status</th><th>SLA</th><th>Assigned To</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ticketBody">
+              <tr class="loading-row"><td colspan="8"><span class="spinner"></span>Loading tickets...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ EMERGENCY ═══════════════════════════════ -->
+    <div class="page" id="page-emergency">
+      <div class="page-header"><h1>🚨 Emergency Center</h1><p>Active emergencies need immediate response</p></div>
+      <div id="emergencyList">
+        <div class="emer-card">
+          <div class="emer-card-header">
+            <div class="emer-av">💧</div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;"><span class="badge b-emergency">🚨 EMERGENCY</span><span class="ticket-id">TKT-0094</span><span style="font-size:11px;color:var(--muted);">2 min ago</span></div>
+              <div style="font-size:15px;font-weight:800;margin-top:4px;color:var(--text);">Water Pipe Burst — Tower B, Flat 401</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div style="font-size:10.5px;color:var(--muted);">Response Time</div>
+              <div class="emer-timer" id="emer-t1">00:02:14</div>
+            </div>
+          </div>
+          <div class="emer-body">Reported by Ramesh Kumar (+91 98765 43210) via phone. Bathroom pipe burst, water flooding. Multiple units may be affected.</div>
+          <div class="emer-actions">
+            <button class="btn btn-danger btn-sm" onclick="openAssignModal('TKT-0094')">📡 Dispatch Plumber</button>
+            <button class="btn btn-ghost btn-sm" onclick="initiateCall('+919876543210')">📞 Call</button>
+            <button class="btn btn-ghost btn-sm" onclick="sendWAUpdate('TKT-0094','Ramesh Kumar')">💬 WhatsApp</button>
+            <button class="btn btn-success btn-sm" onclick="resolveTicket('TKT-0094')">✓ Resolved</button>
+          </div>
+        </div>
+        <div class="emer-card">
+          <div class="emer-card-header">
+            <div class="emer-av" style="background:#fff7ed;">⚡</div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;"><span class="badge b-emergency">🚨 EMERGENCY</span><span class="ticket-id">TKT-0093</span><span style="font-size:11px;color:var(--muted);">47 min ago</span></div>
+              <div style="font-size:15px;font-weight:800;margin-top:4px;color:var(--text);">Complete Power Failure — Tower F, Flat 204</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div style="font-size:10.5px;color:var(--muted);">Response Time</div>
+              <div class="emer-timer" id="emer-t2" style="color:var(--warn);">00:47:22</div>
+            </div>
+          </div>
+          <div class="emer-body">Elderly resident alone, no power for 47 min. Intercom not working. Suresh Kumar (Electrician) assigned — en route.</div>
+          <div class="emer-actions">
+            <button class="btn btn-warn btn-sm" onclick="trackStaff('Suresh Kumar')">📍 Track Staff</button>
+            <button class="btn btn-ghost btn-sm" onclick="initiateCall('+919000011111')">📞 Call Resident</button>
+            <button class="btn btn-ghost btn-sm" onclick="escalateTicket('TKT-0093')">⬆️ Escalate</button>
+            <button class="btn btn-success btn-sm" onclick="resolveTicket('TKT-0093')">✓ Resolved</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">📋 Emergency Log — Last 30 Days</div></div>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>Ticket</th><th>Type</th><th>Flat</th><th>Reported</th><th>Response</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr onclick="openTicketModal('TKT-0079')"><td><span class="ticket-id">TKT-0079</span></td><td>🔥 Fire Alarm</td><td>C-501</td><td>5 days ago</td><td>4 min</td><td><span class="badge b-done">✅ Resolved</span></td></tr>
+              <tr onclick="openTicketModal('TKT-0071')"><td><span class="ticket-id">TKT-0071</span></td><td>💧 Flood</td><td>A-102</td><td>11 days ago</td><td>8 min</td><td><span class="badge b-done">✅ Resolved</span></td></tr>
+              <tr onclick="openTicketModal('TKT-0065')"><td><span class="ticket-id">TKT-0065</span></td><td>🚑 Medical</td><td>H-303</td><td>18 days ago</td><td>3 min</td><td><span class="badge b-done">✅ Resolved</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ STAFF ════════════════════════════════════ -->
+    <div class="page" id="page-staff">
+      <div class="page-header"><h1>👷 Staff Management</h1><p id="staffSubtitle">Loading staff from Google Sheets...</p></div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="openModal('addStaffModal')">+ Add Staff</button>
+        <button class="btn btn-ghost" onclick="loadStaffFromSheet()">🔄 Refresh from Sheet</button>
+        <button class="btn btn-ghost" onclick="exportStaff()">⬇️ Export</button>
+      </div>
+      <div class="staff-grid" id="staffGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted);font-size:13px;"><span class="spinner"></span> Loading staff data from Google Sheets...</div>
+      </div>
+    </div>
+
+    <!-- ═══════ RESIDENTS ═══════════════════════════════ -->
+    <div class="page" id="page-residents">
+      <div class="page-header"><h1>🏠 Resident Directory</h1><p id="residentSubtitle">Loading from Google Sheets...</p></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <div class="search-bar" style="flex:1;max-width:340px;">
+          <span class="search-icon">🔍</span>
+          <input placeholder="Search name, flat, phone..." oninput="filterResidents(this.value)">
+        </div>
+        <select class="form-control" style="width:auto;" id="residentTowerFilter" onchange="filterResidents('')">
+          <option value="">All Towers</option>
+        </select>
+        <button class="btn btn-primary" onclick="openModal('addResidentModal')">+ Add Resident</button>
+        <button class="btn btn-ghost" onclick="loadResidentsFromSheet()">🔄 Refresh</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>Flat</th><th>Tower</th><th>Name</th><th>Phone</th><th>WhatsApp</th><th>Open Tickets</th><th>Actions</th></tr></thead>
+            <tbody id="residentBody">
+              <tr class="loading-row"><td colspan="7"><span class="spinner"></span>Loading residents...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ NOTIFICATIONS ════════════════════════════ -->
+    <div class="page" id="page-notifications">
+      <div class="page-header"><h1>🔔 Notifications</h1><p>WhatsApp, SMS and internal alerts</p></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">📤 Send Broadcast</div></div>
+          <div class="form-group"><label class="form-label">Audience</label>
+            <select class="form-control" id="broadcastAudience">
+              <option>All Residents</option>
+              <option>Staff Only</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Channel</label>
+            <select class="form-control">
+              <option>💬 WhatsApp</option><option>📱 SMS</option><option>All Channels</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Message</label>
+            <textarea class="form-control" id="broadcastMsg" rows="4">Dear Residents, water supply will be interrupted on 10th April (9AM–1PM) for pipe maintenance. We apologize for the inconvenience.</textarea>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" style="flex:1;" onclick="sendBroadcast()">📤 Send Now</button>
+            <button class="btn btn-ghost" onclick="toast('Scheduled for later','info')">⏰ Schedule</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📋 Templates</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;cursor:pointer;border:1px solid var(--border);" onclick="applyTemplate('ticket_created')">
+              <div style="font-size:12.5px;font-weight:600;">🎫 Ticket Created</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">"Your complaint #{id} has been registered. We'll update you shortly."</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;cursor:pointer;border:1px solid var(--border);" onclick="applyTemplate('assigned')">
+              <div style="font-size:12.5px;font-weight:600;">⚡ Ticket Assigned</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">"Your issue is assigned to {staff}. ETA: {time}."</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;cursor:pointer;border:1px solid var(--border);" onclick="applyTemplate('resolved')">
+              <div style="font-size:12.5px;font-weight:600;">✅ Ticket Resolved</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">"Complaint #{id} resolved. Please rate: ⭐⭐⭐⭐⭐"</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;cursor:pointer;border:1px solid var(--border);" onclick="applyTemplate('emergency')">
+              <div style="font-size:12.5px;font-weight:600;">🚨 Emergency Alert</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">"URGENT: {type} at {location}. Please {action}."</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;cursor:pointer;border:1px solid var(--border);" onclick="applyTemplate('maintenance')">
+              <div style="font-size:12.5px;font-weight:600;">🔧 Maintenance Notice</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">"Maintenance scheduled on {date} from {time}. Inconvenience regretted."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ REPORTS ══════════════════════════════════ -->
+    <div class="page" id="page-reports">
+      <div class="page-header"><h1>📈 Reports & Analytics</h1><p>Monthly summary — April 2025</p></div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <select class="form-control" style="width:auto;"><option>April 2025</option><option>March 2025</option></select>
+        <button class="btn btn-ghost" onclick="toast('Downloading PDF report...','info')">⬇️ PDF</button>
+        <button class="btn btn-ghost" onclick="toast('Exporting to Excel...','info')">📊 Excel</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Total This Month</div><div class="stat-icon-wrap" style="background:var(--accent-lt)">📊</div></div><div class="stat-value" style="color:var(--accent);">124</div><div class="stat-trend trend-dn">↑ 18% vs last month</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Resolution Rate</div><div class="stat-icon-wrap" style="background:var(--success-lt)">✅</div></div><div class="stat-value" style="color:var(--success);">94%</div><div class="stat-trend trend-up">↑ 2%</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Avg Resolution</div><div class="stat-icon-wrap" style="background:var(--accent-lt)">⏱️</div></div><div class="stat-value" style="color:var(--accent);">4.2h</div><div class="stat-trend trend-up">↓ 0.8h faster</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">SLA Breaches</div><div class="stat-icon-wrap" style="background:#fef2f2">⚠️</div></div><div class="stat-value" style="color:var(--danger);">8</div><div class="stat-trend trend-up">↓ from 14</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 Issues by Category</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12.5px;"><span>🔧 Plumbing</span><span style="font-weight:700;">38 (31%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:31%;background:var(--accent);"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12.5px;"><span>⚡ Electrical</span><span style="font-weight:700;">29 (23%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:23%;background:var(--warn);"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12.5px;"><span>🛗 Lift/Elevator</span><span style="font-weight:700;">21 (17%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:17%;background:var(--purple);"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12.5px;"><span>🛡️ Security</span><span style="font-weight:700;">16 (13%)</span></div><div class="prog-bar"><div class="prog-fill prog-success" style="width:13%;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12.5px;"><span>🧹 Housekeeping</span><span style="font-weight:700;">12 (10%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:10%;background:#06b6d4;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12.5px;"><span>🏗️ Structural</span><span style="font-weight:700;">8 (6%)</span></div><div class="prog-bar"><div class="prog-fill prog-danger" style="width:6%;"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏆 Staff Efficiency</div></div>
+          <div id="staffEfficiency">
+            <div class="report-metric"><span class="rm-label">Suresh Kumar (Electrician)</span><span class="rm-val" style="color:var(--success);">98%</span></div>
+            <div class="report-metric"><span class="rm-label">Ravi Varma (Security)</span><span class="rm-val" style="color:var(--success);">96%</span></div>
+            <div class="report-metric"><span class="rm-label">Mohan Rao (Plumber)</span><span class="rm-val" style="color:var(--accent);">88%</span></div>
+            <div class="report-metric"><span class="rm-label">Anitha Nair (Housekeeping)</span><span class="rm-val" style="color:var(--warn);">74%</span></div>
+            <div class="report-metric"><span class="rm-label">Vijay Kumar (Carpenter)</span><span class="rm-val" style="color:var(--danger);">61% ⚠️</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SLA MONITOR ══════════════════════════════ -->
+    <div class="page" id="page-sla">
+      <div class="page-header"><h1>⏱️ SLA Monitor</h1><p>Track resolution timelines</p></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Within SLA</div><div class="stat-value" style="color:var(--success);">26</div></div>
+        <div class="stat-card"><div class="stat-label">At Risk (&gt;80%)</div><div class="stat-value" style="color:var(--warn);">5</div></div>
+        <div class="stat-card"><div class="stat-label">Breached</div><div class="stat-value" style="color:var(--danger);">3</div></div>
+        <div class="stat-card"><div class="stat-label">SLA Compliance</div><div class="stat-value" style="color:var(--accent);">92%</div></div>
+      </div>
+      <div class="card mb14">
+        <div class="card-header"><div class="card-title">🔴 Breaches & At-Risk</div></div>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>Ticket</th><th>Issue</th><th>Flat</th><th>Priority</th><th>SLA Target</th><th>Elapsed</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="ticket-id">TKT-0089</span></td><td>Lift stuck</td><td>D-308</td>
+                <td><span class="badge b-high">High</span></td><td>4 hrs</td>
+                <td><span style="color:var(--danger);font-weight:700;">7h 14m ❌</span></td>
+                <td><span class="badge b-inprog">In Progress</span></td>
+                <td><button class="btn btn-danger btn-xs" onclick="escalateTicket('TKT-0089')">Escalate</button></td>
+              </tr>
+              <tr>
+                <td><span class="ticket-id">TKT-0087</span></td><td>Water leakage</td><td>A-201</td>
+                <td><span class="badge b-high">High</span></td><td>4 hrs</td>
+                <td><span style="color:var(--danger);font-weight:700;">5h 02m ❌</span></td>
+                <td><span class="badge b-assigned">Assigned</span></td>
+                <td><button class="btn btn-danger btn-xs" onclick="escalateTicket('TKT-0087')">Escalate</button></td>
+              </tr>
+              <tr>
+                <td><span class="ticket-id">TKT-0085</span></td><td>Power backup</td><td>F-101</td>
+                <td><span class="badge b-medium">Medium</span></td><td>8 hrs</td>
+                <td><span style="color:var(--warn);font-weight:700;">6h 30m ⚠️</span></td>
+                <td><span class="badge b-assigned">Assigned</span></td>
+                <td><button class="btn btn-warn btn-xs" onclick="remindStaff('TKT-0085')">Remind</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">⚙️ SLA Rules</div><button class="btn btn-ghost btn-sm" onclick="openModal('slaConfigModal')">Edit</button></div>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>Priority</th><th>Response</th><th>Resolution</th><th>Escalate To</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge b-emergency">Emergency</span></td><td>15 min</td><td>2 hrs</td><td>Supervisor + Admin</td></tr>
+              <tr><td><span class="badge b-high">High</span></td><td>1 hr</td><td>4 hrs</td><td>Supervisor</td></tr>
+              <tr><td><span class="badge b-medium">Medium</span></td><td>4 hrs</td><td>8 hrs</td><td>Supervisor (if breached)</td></tr>
+              <tr><td><span class="badge b-low">Low</span></td><td>24 hrs</td><td>48 hrs</td><td>Auto reminder</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ WHATSAPP ══════════════════════════════════ -->
+    <div class="page" id="page-whatsapp">
+      <div class="page-header"><h1>💬 WhatsApp Chatbot</h1><p>Automated ticket creation via WhatsApp Business API</p></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🤖 Bot Conversation Flow</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="wa-step"><div class="wa-num">1</div><div><strong>Resident sends any message</strong><span>Bot: "Welcome to <span id="wa-township-name">Sahabhavana</span> Helpline! Reply with your flat number (e.g. B401)"</span></div></div>
+            <div class="wa-step"><div class="wa-num">2</div><div><strong>Resident sends flat number</strong><span>Bot validates against Residents sheet and shows issue type menu</span></div></div>
+            <div class="wa-step"><div class="wa-num">3</div><div><strong>Resident selects category (1–9)</strong><span>Bot: "Briefly describe your issue:"</span></div></div>
+            <div class="wa-step"><div class="wa-num">4</div><div><strong>Resident describes issue</strong><span>Bot: "Send a photo? Reply YES or SKIP"</span></div></div>
+            <div class="wa-step"><div class="wa-num">5</div><div><strong>Ticket Auto-Created</strong><span>Bot: "✅ Ticket TKT-XXXX raised! Reply STATUS TKT-XXXX anytime to track."</span></div></div>
+            <div class="wa-step"><div class="wa-num">6</div><div><strong>Status Check</strong><span>Resident types "STATUS TKT-XXXX" → Bot returns current status + assigned staff + ETA</span></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 This Month</div></div>
+          <div style="margin-bottom:16px;">
+            <div class="report-metric"><span class="rm-label">WhatsApp Tickets</span><span class="rm-val" style="color:var(--success);">312</span></div>
+            <div class="report-metric"><span class="rm-label">Bot Completion</span><span class="rm-val" style="color:var(--success);">84%</span></div>
+            <div class="report-metric"><span class="rm-label">Avg Response</span><span class="rm-val">&lt; 2 sec</span></div>
+            <div class="report-metric"><span class="rm-label">Dropped Midway</span><span class="rm-val" style="color:var(--warn);">50 (16%)</span></div>
+          </div>
+          <div class="card-header" style="padding:0;border:none;margin-bottom:10px;"><div class="card-title">⚙️ WhatsApp Config</div></div>
+          <div class="form-group"><label class="form-label">WA Business Number</label><input class="form-control" id="wa-number" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="form-group"><label class="form-label">Provider</label>
+            <select class="form-control"><option>WATI</option><option>Twilio</option><option>Gupshup</option><option>Meta Direct</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">API Token</label><input class="form-control" type="password" placeholder="Enter API token"></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="saveWAConfig()">💾 Save WhatsApp Config</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SETTINGS ═════════════════════════════════ -->
+    <div class="page" id="page-settings">
+      <div class="page-header"><h1>⚙️ Settings</h1><p>Configure your township CRM — connected to Google Sheets</p></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏘️ Township Info</div></div>
+          <div class="form-group"><label class="form-label">Township Name</label><input class="form-control" id="cfg-name" placeholder="e.g. SAHABHAVANA TOWNSHIP"></div>
+          <div class="form-group"><label class="form-label">Helpline Number</label><input class="form-control" id="cfg-helpline" placeholder="e.g. 1800-XXX-HELP"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Total Towers</label><input class="form-control" id="cfg-towers" type="number" placeholder="9"></div>
+            <div class="form-group"><label class="form-label">Total Flats</label><input class="form-control" id="cfg-flats" type="number" placeholder="486"></div>
+          </div>
+          <div class="form-group"><label class="form-label">City</label><input class="form-control" id="cfg-city" placeholder="Hyderabad, Telangana"></div>
+          <div class="form-group"><label class="form-label">Admin Name</label><input class="form-control" id="cfg-admin" placeholder="Admin name"></div>
+          <button class="btn btn-primary" onclick="saveSettings()" style="width:100%;">💾 Save Settings</button>
+          <div style="margin-top:10px;font-size:11.5px;color:var(--muted);">Settings saved in browser localStorage. Google Sheets integration pulls live data.</div>
+        </div>
+        <div>
+          <div class="card mb14">
+            <div class="card-header"><div class="card-title">🔗 Google Sheets</div></div>
+            <div class="form-group"><label class="form-label">Apps Script URL</label><input class="form-control" id="cfg-apiUrl" placeholder="https://script.google.com/macros/s/.../exec"></div>
+            <button class="btn btn-primary" onclick="testConnection()" style="width:100%;margin-bottom:8px;">🔌 Test Connection</button>
+            <button class="btn btn-ghost" onclick="loadAllFromSheets()" style="width:100%;">🔄 Sync All Data Now</button>
+            <div id="connectionStatus" style="margin-top:10px;font-size:12px;color:var(--muted);">Not connected — enter your Apps Script URL above.</div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">🔗 Integrations</div></div>
+            <div class="integ-row"><span class="integ-icon">💬</span><div><div class="integ-label">WhatsApp Business</div><div class="integ-sub" id="wa-status">Not configured</div></div><div class="integ-status"><span class="badge b-assigned" id="wa-badge">Pending</span></div></div>
+            <div class="integ-row"><span class="integ-icon">📱</span><div><div class="integ-label">SMS Gateway (MSG91)</div><div class="integ-sub">Fallback for missed calls</div></div><div class="integ-status"><span class="badge b-medium">Setup</span></div></div>
+            <div class="integ-row"><span class="integ-icon">📞</span><div><div class="integ-label">IVR / Call System</div><div class="integ-sub">Exotel / Ozonetel</div></div><div class="integ-status"><button class="btn btn-ghost btn-xs" onclick="toast('IVR setup guide opening...','info')">Setup</button></div></div>
+            <div class="integ-row" style="margin-bottom:0"><span class="integ-icon">📊</span><div><div class="integ-label">Google Sheets</div><div class="integ-sub" id="sheets-status">Not connected</div></div><div class="integ-status"><span class="badge b-assigned" id="sheets-badge">Pending</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g2" style="margin-top:14px;">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏢 Tower & Flat Configuration</div><button class="btn btn-primary btn-sm" onclick="openModal('towerConfigModal')">+ Add Tower</button></div>
+          <div class="table-wrap">
+            <table class="tbl" id="towerConfigTable">
+              <thead><tr><th>Tower Name</th><th>Floors</th><th>Flats/Floor</th><th>Total Flats</th><th>Actions</th></tr></thead>
+              <tbody id="towerConfigBody">
+                <tr class="loading-row"><td colspan="5"><span class="spinner"></span>Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔔 Notification Settings</div></div>
+          <div class="setting-row">
+            <div><div class="setting-label">Auto-notify on ticket creation</div><div class="setting-sub">WhatsApp + SMS to resident</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Staff assignment alerts</div><div class="setting-sub">Notify staff on new assignment</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">SLA breach escalation</div><div class="setting-sub">Auto-escalate to supervisor</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Emergency SMS broadcast</div><div class="setting-sub">Alert all staff on emergency</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Daily summary report</div><div class="setting-sub">Email report to admin at 7PM</div></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ RESIDENT PORTAL ══════════════════════════ -->
+    <div class="page" id="page-portal">
+      <div class="resident-hero">
+        <h2>🏘️ <span id="portalName">Sahabhavana</span> Helpline</h2>
+        <p>Raise a complaint, track your request, or contact us</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;font-size:12.5px;color:var(--muted);">
+          <span>📞 <span id="portalPhone">1800-PSR-HELP</span></span>•<span>💬 WhatsApp same number</span>•<span>24×7</span>
+        </div>
+      </div>
+      <div class="quick-grid">
+        <div class="quick-btn" onclick="openResidentForm('Plumbing')"><span class="q-icon">🔧</span><span class="q-label">Plumbing</span><span class="q-sub">Leaks, blocks</span></div>
+        <div class="quick-btn" onclick="openResidentForm('Electrical')"><span class="q-icon">⚡</span><span class="q-label">Electrical</span><span class="q-sub">Power, wiring</span></div>
+        <div class="quick-btn" onclick="openResidentForm('Lift/Elevator')"><span class="q-icon">🛗</span><span class="q-label">Lift</span><span class="q-sub">Stuck, slow</span></div>
+        <div class="quick-btn" onclick="openResidentForm('Security')"><span class="q-icon">🛡️</span><span class="q-label">Security</span><span class="q-sub">Access, CCTV</span></div>
+        <div class="quick-btn" onclick="openResidentForm('Housekeeping')"><span class="q-icon">🧹</span><span class="q-label">Housekeeping</span><span class="q-sub">Cleaning, waste</span></div>
+        <div class="quick-btn" onclick="openResidentForm('Parking')"><span class="q-icon">🅿️</span><span class="q-label">Parking</span><span class="q-sub">Slot, violation</span></div>
+        <div class="quick-btn" onclick="openResidentForm('Gym/Amenities')"><span class="q-icon">🏋️</span><span class="q-label">Gym / Amenity</span><span class="q-sub">Equipment, pool</span></div>
+        <div class="quick-btn emergency" onclick="openResidentForm('Emergency')"><span class="q-icon">🚨</span><span class="q-label">EMERGENCY</span><span class="q-sub">Call now!</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🔍 Track My Complaint</div></div>
+        <div style="display:flex;gap:8px;">
+          <input class="form-control" id="trackInput" placeholder="Enter Ticket ID (e.g. TKT-0090)" style="flex:1;">
+          <button class="btn btn-primary" onclick="trackTicket()">Track</button>
+        </div>
+        <div id="trackResult" style="display:none;margin-top:12px;">
+          <div style="background:var(--surface2);border-radius:10px;padding:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span class="ticket-id" id="trackId">TKT-0090</span>
+              <span class="badge b-inprog" id="trackStatus">In Progress</span>
+            </div>
+            <div style="font-size:13.5px;font-weight:600;" id="trackIssue">Lift not working — Tower D, Flat 202</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;" id="trackAssigned">Assigned to: Suresh Kumar · ETA: 2 hours</div>
+            <div style="margin-top:10px;"><div class="prog-bar" style="height:8px;"><div class="prog-fill" style="width:60%;"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+</div><!-- /app -->
+
+<!-- ══════════════════════ MODALS ═══════════════════════════ -->
+
+<!-- Ticket Detail Modal -->
+<div class="overlay" id="ticketModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div><div class="modal-title" id="tm-title">Ticket Detail</div><span class="ticket-id" id="tm-id" style="margin-top:3px;display:inline-block;"></span></div>
+      <div class="modal-close" onclick="closeModal('ticketModal')">✕</div>
+    </div>
+    <div class="modal-body" id="tm-body"></div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('ticketModal')">Close</button>
+      <button class="btn btn-warn" id="tm-assign-btn">⚡ Assign</button>
+      <button class="btn btn-success" id="tm-resolve-btn">✓ Mark Resolved</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assign Staff Modal -->
+<div class="overlay" id="assignModal">
+  <div class="modal modal-sm">
+    <div class="modal-hdr">
+      <div class="modal-title">Assign Staff</div>
+      <div class="modal-close" onclick="closeModal('assignModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Ticket</label><input class="form-control" id="assign-ticket-id" readonly></div>
+      <div class="form-group"><label class="form-label">Assign To</label>
+        <select class="form-control" id="assign-staff-select"><option value="">Select Staff Member</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Notes (optional)</label><textarea class="form-control" id="assign-notes" rows="2" placeholder="Any instructions..."></textarea></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('assignModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAssign()">✓ Assign Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Staff Modal -->
+<div class="overlay" id="addStaffModal">
+  <div class="modal modal-sm">
+    <div class="modal-hdr">
+      <div class="modal-title">Add Staff Member</div>
+      <div class="modal-close" onclick="closeModal('addStaffModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-control" id="ns-name" placeholder="e.g. Raju Verma"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Role</label>
+          <select class="form-control" id="ns-role">
+            <option>Plumber</option><option>Electrician</option><option>Security</option>
+            <option>Housekeeping</option><option>Carpenter</option><option>Supervisor</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-control" id="ns-status"><option>Active</option><option>Part-time</option><option>On Leave</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Phone / WhatsApp</label><input class="form-control" id="ns-phone" placeholder="+91 XXXXX XXXXX"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('addStaffModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addStaff()">+ Add Staff</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Resident Modal -->
+<div class="overlay" id="addResidentModal">
+  <div class="modal modal-sm">
+    <div class="modal-hdr">
+      <div class="modal-title">Add Resident</div>
+      <div class="modal-close" onclick="closeModal('addResidentModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Tower</label>
+          <select class="form-control" id="nr-tower" onchange="populateFlats('nr-tower','nr-flat')"><option value="">Select</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Flat No</label>
+          <select class="form-control" id="nr-flat"><option value="">Select Flat</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Resident Name</label><input class="form-control" id="nr-name" placeholder="Full name"></div>
+      <div class="form-group"><label class="form-label">Phone</label><input class="form-control" id="nr-phone" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-control" id="nr-type"><option>Owner</option><option>Tenant</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">WhatsApp Active?</label>
+          <select class="form-control" id="nr-wa"><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('addResidentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addResident()">+ Add Resident</button>
+    </div>
+  </div>
+</div>
+
+<!-- Resident Complaint Modal -->
+<div class="overlay" id="residentModal">
+  <div class="modal modal-sm">
+    <div class="modal-hdr">
+      <div class="modal-title" id="rm-title">Raise Complaint</div>
+      <div class="modal-close" onclick="closeModal('residentModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Your Name</label><input class="form-control" id="rm-name" placeholder="Full name"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Tower</label>
+          <select class="form-control" id="rm-tower" onchange="populateFlats('rm-tower','rm-flat')"><option value="">Select</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Flat No</label>
+          <select class="form-control" id="rm-flat"><option value="">Select Flat</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Phone</label><input class="form-control" id="rm-phone" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="form-group"><label class="form-label">Issue Type</label><input class="form-control" id="rm-type" readonly></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-control" id="rm-desc" rows="3" placeholder="Describe the issue..."></textarea></div>
+      <div class="form-group"><label class="form-label">Photo (Optional)</label><input type="file" class="form-control" accept="image/*"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('residentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitResidentTicket()">🎫 Submit Complaint</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Resident Modal -->
+<div class="overlay" id="viewResidentModal">
+  <div class="modal modal-sm">
+    <div class="modal-hdr">
+      <div class="modal-title">Resident Profile</div>
+      <div class="modal-close" onclick="closeModal('viewResidentModal')">✕</div>
+    </div>
+    <div class="modal-body" id="vr-body"></div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('viewResidentModal')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('viewResidentModal');go('helpline',null)">+ Raise Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tower Config Modal -->
+<div class="overlay" id="towerConfigModal">
+  <div class="modal modal-sm">
+    <div class="modal-hdr">
+      <div class="modal-title">Add / Edit Tower</div>
+      <div class="modal-close" onclick="closeModal('towerConfigModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Tower Name</label><input class="form-control" id="tc-name" placeholder="e.g. Tower A or Block 1"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">No. of Floors</label><input class="form-control" id="tc-floors" type="number" placeholder="10"></div>
+        <div class="form-group"><label class="form-label">Flats per Floor</label><input class="form-control" id="tc-fpf" type="number" placeholder="6"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Flat Prefix</label><input class="form-control" id="tc-prefix" placeholder="e.g. A (generates A-101, A-102...)"></div>
+      <div style="font-size:12px;color:var(--muted);padding:8px 0;">Flat numbers will be auto-generated as: [Prefix]-[Floor][Unit]</div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('towerConfigModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addTower()">+ Add Tower</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLA Config Modal -->
+<div class="overlay" id="slaConfigModal">
+  <div class="modal modal-sm">
+    <div class="modal-hdr">
+      <div class="modal-title">⚙️ SLA Configuration</div>
+      <div class="modal-close" onclick="closeModal('slaConfigModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Emergency — Response (min)</label><input class="form-control" value="15" type="number"></div>
+      <div class="form-group"><label class="form-label">Emergency — Resolution (hrs)</label><input class="form-control" value="2" type="number"></div>
+      <div class="form-group"><label class="form-label">High — Response (hrs)</label><input class="form-control" value="1" type="number"></div>
+      <div class="form-group"><label class="form-label">High — Resolution (hrs)</label><input class="form-control" value="4" type="number"></div>
+      <div class="form-group"><label class="form-label">Medium — Resolution (hrs)</label><input class="form-control" value="8" type="number"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('slaConfigModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSLAConfig()">💾 Save SLA Rules</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ══════════════════════ JAVASCRIPT ═══════════════════════ -->
+<script>
+// ── CONFIG & STATE ──────────────────────────────────────────
+const CFG_KEY = 'sahabhavana_crm_v2';
+let CFG = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+const API_URL = CFG.apiUrl || '';
+
+// Default township data if not from sheets
+let STATE = {
+  towers: CFG.towers || [
+    { name:'Tower A', prefix:'A', floors:10, fpf:6 },
+    { name:'Tower B', prefix:'B', floors:10, fpf:6 },
+    { name:'Tower C', prefix:'C', floors:9,  fpf:6 },
+    { name:'Tower D', prefix:'D', floors:9,  fpf:6 },
+    { name:'Tower E', prefix:'E', floors:8,  fpf:6 },
+    { name:'Tower F', prefix:'F', floors:8,  fpf:6 },
+    { name:'Tower G', prefix:'G', floors:8,  fpf:6 },
+    { name:'Tower H', prefix:'H', floors:8,  fpf:6 },
+    { name:'Tower I', prefix:'I', floors:6,  fpf:6 },
+  ],
+  staff: CFG.staff || [
+    { id:'S001', name:'Suresh Kumar', role:'Electrician', phone:'+91 90001 11111', status:'Active', closed:47, open:3, avgHrs:3.1 },
+    { id:'S002', name:'Mohan Rao',    role:'Plumber',     phone:'+91 90002 22222', status:'Active', closed:38, open:5, avgHrs:4.8 },
+    { id:'S003', name:'Ravi Varma',   role:'Security',    phone:'+91 90003 33333', status:'Active', closed:29, open:1, avgHrs:1.2 },
+    { id:'S004', name:'Anitha Nair',  role:'Housekeeping',phone:'+91 90004 44444', status:'Active', closed:22, open:4, avgHrs:5.4 },
+    { id:'S005', name:'Vijay Kumar',  role:'Carpenter',   phone:'+91 90005 55555', status:'Part-time', closed:15, open:6, avgHrs:8.2 },
+    { id:'S006', name:'Priya Patel',  role:'Supervisor',  phone:'+91 90006 66666', status:'Active', closed:0, open:0, avgHrs:0 },
+  ],
+  residents: CFG.residents || [
+    { flat:'B-401', tower:'Tower B', name:'Ramesh Kumar', phone:'+91 98765 43210', wa:'Yes', type:'Owner' },
+    { flat:'D-202', tower:'Tower D', name:'Priya Sharma',  phone:'+91 90000 11111', wa:'Yes', type:'Owner' },
+    { flat:'A-105', tower:'Tower A', name:'Srinivas Reddy',phone:'+91 91234 56789', wa:'No',  type:'Tenant' },
+    { flat:'G-105', tower:'Tower G', name:'Anand Rao',     phone:'+91 99887 76655', wa:'Yes', type:'Owner' },
+    { flat:'C-301', tower:'Tower C', name:'Meera Iyer',    phone:'+91 93456 78901', wa:'Yes', type:'Owner' },
+  ],
+  tickets: CFG.tickets || [
+    { id:'TKT-0094', name:'Ramesh Kumar', flat:'B-401', tower:'Tower B', type:'Plumbing', priority:'emergency', status:'Open', slaMin:120, elapsedMin:2, staff:'', channel:'📞 Call', desc:'Water pipe burst in bathroom. Flooding.', created:new Date().toISOString() },
+    { id:'TKT-0093', name:'Sunita Rao',  flat:'F-204', tower:'Tower F', type:'Electrical', priority:'emergency', status:'Assigned', slaMin:120, elapsedMin:47, staff:'Suresh Kumar', channel:'💬 WhatsApp', desc:'Complete power failure. Elderly resident alone.', created:new Date().toISOString() },
+    { id:'TKT-0092', name:'Gopal Sharma',flat:'A-312', tower:'Tower A', type:'Lift', priority:'high', status:'In Progress', slaMin:240, elapsedMin:80, staff:'Suresh Kumar', channel:'📞 Call', desc:'Lift stuck between floors.', created:new Date().toISOString() },
+    { id:'TKT-0091', name:'Nandini Reddy',flat:'A-108',tower:'Tower A', type:'Plumbing', priority:'high', status:'In Progress', slaMin:240, elapsedMin:95, staff:'Mohan Rao', channel:'💬 WhatsApp', desc:'Drain blocked in kitchen for 2 days.', created:new Date().toISOString() },
+    { id:'TKT-0090', name:'Priya Sharma', flat:'D-202', tower:'Tower D', type:'Lift', priority:'high', status:'In Progress', slaMin:240, elapsedMin:190, staff:'Suresh Kumar', channel:'💬 WhatsApp', desc:'Lift not working since morning.', created:new Date().toISOString() },
+    { id:'TKT-0089', name:'Anand Rao',   flat:'G-105', tower:'Tower G', type:'Parking', priority:'medium', status:'Assigned', slaMin:480, elapsedMin:430, staff:'Ravi Varma', channel:'🌐 Web', desc:'Unauthorized vehicle in my slot.', created:new Date().toISOString() },
+    { id:'TKT-0088', name:'Kavita Nair', flat:'C-203', tower:'Tower C', type:'Gym/Amenities', priority:'low', status:'Completed', slaMin:480, elapsedMin:210, staff:'Vijay Kumar', channel:'🌐 Web', desc:'Treadmill not working.', created:new Date().toISOString() },
+    { id:'TKT-0087', name:'Ravi Teja',   flat:'A-201', tower:'Tower A', type:'Plumbing', priority:'high', status:'Assigned', slaMin:240, elapsedMin:302, staff:'Mohan Rao', channel:'📞 Call', desc:'Water leakage from ceiling.', created:new Date().toISOString() },
+    { id:'TKT-0086', name:'Sita Ram',    flat:'H-404', tower:'Tower H', type:'Security', priority:'medium', status:'Open', slaMin:480, elapsedMin:60, staff:'', channel:'💬 WhatsApp', desc:'CCTV camera not working.', created:new Date().toISOString() },
+    { id:'TKT-0085', name:'Deepa Mehta', flat:'F-101', tower:'Tower F', type:'Electrical', priority:'medium', status:'Assigned', slaMin:480, elapsedMin:390, staff:'Suresh Kumar', channel:'📞 Call', desc:'Power backup not switching on.', created:new Date().toISOString() },
+  ],
+  ticketCounter: CFG.ticketCounter || 95,
+};
+
+// ── NAVIGATION ───────────────────────────────────────────────
+const PAGE_TITLES = {
+  dashboard:'Dashboard', helpline:'Helpline', tickets:'Ticket Management',
+  emergency:'Emergency Center', staff:'Staff Management', residents:'Residents',
+  notifications:'Notifications', reports:'Reports & Analytics', sla:'SLA Monitor',
+  whatsapp:'WhatsApp Bot', settings:'Settings', portal:'Resident Portal'
+};
+
+function go(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  else {
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.onclick && n.onclick.toString().includes(`'${page}'`)) n.classList.add('active');
+    });
+  }
+  document.getElementById('topbarTitle').textContent = PAGE_TITLES[page] || page;
+  closeSidebar();
+  document.getElementById('notifPanel').classList.remove('open');
+  // Page-specific loads
+  if (page === 'tickets') renderTickets();
+  if (page === 'staff') renderStaff();
+  if (page === 'residents') renderResidents();
+  if (page === 'settings') loadSettingsForm();
+  if (page === 'portal') updatePortalStrings();
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────────
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+function toggleNotif() { document.getElementById('notifPanel').classList.toggle('open'); }
+
+// ── FLAT GENERATION ──────────────────────────────────────────
+function getFlatsForTower(towerName) {
+  const t = STATE.towers.find(x => x.name === towerName);
+  if (!t) return [];
+  const flats = [];
+  for (let fl = 1; fl <= t.floors; fl++) {
+    for (let u = 1; u <= t.fpf; u++) {
+      flats.push(`${t.prefix}-${fl}${String(u).padStart(2,'0')}`);
+    }
+  }
+  return flats;
+}
+
+function populateFlats(towerId, flatId) {
+  const tower = document.getElementById(towerId)?.value;
+  const flatSel = document.getElementById(flatId);
+  if (!flatSel) return;
+  flatSel.innerHTML = '<option value="">Select Flat</option>';
+  if (!tower) return;
+  getFlatsForTower(tower).forEach(f => {
+    const o = document.createElement('option'); o.value = f; o.textContent = f; flatSel.appendChild(o);
+  });
+}
+
+function populateTowerSelects() {
+  const selects = ['nt-tower','nr-tower','rm-tower','residentTowerFilter'];
+  selects.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const isFilter = id === 'residentTowerFilter';
+    el.innerHTML = isFilter ? '<option value="">All Towers</option>' : '<option value="">Select Tower</option>';
+    STATE.towers.forEach(t => {
+      const o = document.createElement('option'); o.value = t.name; o.textContent = t.name; el.appendChild(o);
+    });
+  });
+}
+
+// ── TICKET RENDERING ─────────────────────────────────────────
+let ticketFilterVal = 'all', ticketSearchVal = '';
+const PRIO_BADGE = { emergency:'b-emergency', high:'b-high', medium:'b-medium', low:'b-low' };
+const STATUS_BADGE = { 'Open':'b-open', 'Assigned':'b-assigned', 'In Progress':'b-inprog', 'Completed':'b-done', 'Closed':'b-closed' };
+
+function renderTickets() {
+  const tbody = document.getElementById('ticketBody');
+  let data = STATE.tickets.filter(t => {
+    if (ticketFilterVal === 'emergency') return t.priority === 'emergency';
+    if (ticketFilterVal !== 'all') return t.status === ticketFilterVal;
+    return true;
+  }).filter(t => {
+    if (!ticketSearchVal) return true;
+    const q = ticketSearchVal.toLowerCase();
+    return [t.id, t.name, t.flat, t.type, t.staff].join(' ').toLowerCase().includes(q);
+  });
+
+  // Update count badge
+  const nb = document.getElementById('nb-tickets');
+  if (nb) nb.textContent = STATE.tickets.filter(t => t.status === 'Open').length;
+
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No tickets found</div><div class="empty-sub">Try changing the filter or search term</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(t => {
+    const pct = Math.min((t.elapsedMin / t.slaMin * 100), 100);
+    const sc = pct > 100 ? 'sla-over' : pct > 80 ? 'sla-warn' : 'sla-ok';
+    const rem = t.slaMin - t.elapsedMin;
+    const slaText = rem < 0 ? `<span style="color:var(--danger);font-weight:700;">+${Math.abs(rem)}m over ❌</span>` :
+                               `<span style="color:${sc==='sla-ok'?'var(--success)':'var(--warn)'};font-weight:600;">${rem}m left</span>`;
+    return `<tr onclick="openTicketModal('${t.id}')">
+      <td><span class="ticket-id">${t.id}</span></td>
+      <td><div style="font-weight:600;">${t.name}</div><div style="font-size:11px;color:var(--muted);">${t.flat} · ${t.tower}</div></td>
+      <td>${t.type}</td>
+      <td><span class="badge ${PRIO_BADGE[t.priority]||'b-medium'}">${t.priority}</span></td>
+      <td><span class="badge ${STATUS_BADGE[t.status]||'b-open'}">${t.status}</span></td>
+      <td><div>${slaText}</div><div class="sla-bar" style="width:70px;"><div class="sla-fill ${sc}" style="width:${Math.min(pct,100)}%"></div></div></td>
+      <td style="font-size:12.5px;">${t.staff || '<span style="color:var(--muted);">Unassigned</span>'}</td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-ghost btn-xs" onclick="openAssignModal('${t.id}')">Assign</button>
+          <button class="btn btn-success btn-xs" onclick="resolveTicket('${t.id}')">✓</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTickets(v) { ticketSearchVal = v; renderTickets(); }
+function setTicketFilter(v, el) {
+  ticketFilterVal = v;
+  document.querySelectorAll('#ticketFilters .chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderTickets();
+}
+
+// ── TICKET MODAL ─────────────────────────────────────────────
+function openTicketModal(id) {
+  const t = STATE.tickets.find(x => x.id === id);
+  if (!t) { toast('Ticket not found','warn'); return; }
+  document.getElementById('tm-title').textContent = t.type + ' — ' + t.flat;
+  document.getElementById('tm-id').textContent = t.id;
+  const pct = Math.min(t.elapsedMin / t.slaMin * 100, 100);
+  const sc = pct > 100 ? 'sla-over' : pct > 80 ? 'sla-warn' : 'sla-ok';
+
+  document.getElementById('tm-body').innerHTML = `
+    <div class="ticket-meta-grid">
+      <div class="tmg-item"><div class="tmg-lbl">Resident</div><div class="tmg-val">${t.name}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Flat / Tower</div><div class="tmg-val">${t.flat}, ${t.tower}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Priority</div><div class="tmg-val"><span class="badge ${PRIO_BADGE[t.priority]||'b-medium'}">${t.priority}</span></div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Status</div><div class="tmg-val"><span class="badge ${STATUS_BADGE[t.status]||'b-open'}">${t.status}</span></div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Assigned To</div><div class="tmg-val">${t.staff || 'Unassigned'}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Channel</div><div class="tmg-val">${t.channel}</div></div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px;">
+      <div class="form-label">Description</div>
+      <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text2);">${t.desc}</div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="form-label" style="margin-bottom:5px;">SLA — ${t.elapsedMin}m elapsed / ${t.slaMin}m target</div>
+      <div class="sla-bar" style="height:7px;"><div class="sla-fill ${sc}" style="width:${Math.min(pct,100)}%"></div></div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="form-label" style="margin-bottom:7px;">Update Status</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${['Open','Assigned','In Progress','Completed','Closed'].map(s =>
+          `<button class="btn btn-ghost btn-sm" onclick="updateStatus('${t.id}','${s}')">${s}</button>`
+        ).join('')}
+        <button class="btn btn-ghost btn-sm" onclick="sendWAUpdate('${t.id}','${t.name}')">💬 Notify WA</button>
+      </div>
+    </div>
+    <div>
+      <div class="form-label" style="margin-bottom:7px;">Add Note</div>
+      <div style="display:flex;gap:6px;">
+        <input class="form-control" id="ticket-note-${t.id}" placeholder="Add an update note..." style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="addNote('${t.id}')">Add</button>
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <div class="form-label" style="margin-bottom:7px;">Activity</div>
+      <div class="tl-item">
+        <div class="tl-line"><div class="tl-dot"></div><div class="tl-connector"></div></div>
+        <div class="tl-body"><div class="tl-action">Ticket Created</div><div class="tl-detail">via ${t.channel} · ${t.elapsedMin} min ago</div></div>
+      </div>
+      ${t.staff ? `<div class="tl-item"><div class="tl-line"><div class="tl-dot" style="background:var(--warn)"></div><div class="tl-connector"></div></div><div class="tl-body"><div class="tl-action">Assigned to ${t.staff}</div><div class="tl-detail">by Supervisor</div></div></div>` : ''}
+      ${t.status === 'In Progress' ? `<div class="tl-item"><div class="tl-line"><div class="tl-dot" style="background:var(--success)"></div></div><div class="tl-body"><div class="tl-action">Work started</div><div class="tl-detail">Staff confirmed arrival</div></div></div>` : ''}
+    </div>
+  `;
+  document.getElementById('tm-assign-btn').onclick = () => { closeModal('ticketModal'); openAssignModal(id); };
+  document.getElementById('tm-resolve-btn').onclick = () => { resolveTicket(id); closeModal('ticketModal'); };
+  openModal('ticketModal');
+}
+
+// ── TICKET ACTIONS ────────────────────────────────────────────
+function updateStatus(id, status) {
+  const t = STATE.tickets.find(x => x.id === id);
+  if (!t) return;
+  t.status = status;
+  save();
+  toast(`✅ ${id} → ${status}`, 'success');
+  renderTickets();
+}
+
+function resolveTicket(id) {
+  const t = STATE.tickets.find(x => x.id === id);
+  if (!t) return;
+  t.status = 'Completed';
+  save();
+  toast(`✅ ${id} marked as Completed. WhatsApp update sent!`, 'success');
+  renderTickets();
+  updateDashboardStats();
+}
+
+function escalateTicket(id) {
+  toast(`⬆️ ${id} escalated to Supervisor via WhatsApp + SMS`, 'warn');
+  apiCall('escalate', { id });
+}
+
+function remindStaff(id) {
+  const t = STATE.tickets.find(x => x.id === id);
+  toast(`🔔 Reminder sent to ${t?.staff || 'staff'} for ${id}`, 'info');
+}
+
+function addNote(id) {
+  const inp = document.getElementById('ticket-note-' + id);
+  if (inp && inp.value.trim()) { toast('Note added successfully', 'success'); inp.value = ''; }
+  else toast('Please enter a note first', 'warn');
+}
+
+function createTicketFromForm() {
+  const name   = document.getElementById('nt-name').value.trim();
+  const tower  = document.getElementById('nt-tower').value;
+  const flat   = document.getElementById('nt-flat').value;
+  const type   = document.getElementById('nt-type').value;
+  const pri    = document.getElementById('nt-priority').value;
+  const ch     = document.getElementById('nt-channel').value;
+  const desc   = document.getElementById('nt-desc').value.trim();
+  if (!name || !tower || !flat) { toast('Please fill Name, Tower and Flat No', 'warn'); return; }
+  const priorityKey = pri.includes('Emergency') ? 'emergency' : pri.includes('High') ? 'high' : pri.includes('Medium') ? 'medium' : 'low';
+  const id = 'TKT-0' + (STATE.ticketCounter++).toString().padStart(3,'0');
+  const slaMin = { emergency:120, high:240, medium:480, low:2880 }[priorityKey];
+  STATE.tickets.unshift({ id, name, flat, tower, type, priority:priorityKey, status:'Open', slaMin, elapsedMin:0, staff:'', channel:ch, desc:desc||`${type} issue at ${flat}`, created:new Date().toISOString() });
+  save();
+  toast(`✅ ${id} created! WhatsApp sent to resident.`, 'success');
+  document.getElementById('nt-name').value = '';
+  document.getElementById('nt-desc').value = '';
+  updateDashboardStats();
+  if (priorityKey === 'emergency') toast(`🚨 Emergency alert sent to Supervisor!`, 'warn');
+}
+
+function createEmergency() {
+  const id = 'TKT-0' + (STATE.ticketCounter++).toString().padStart(3,'0');
+  STATE.tickets.unshift({ id, name:'Emergency', flat:'Unknown', tower:'Unknown', type:'Emergency', priority:'emergency', status:'Open', slaMin:120, elapsedMin:0, staff:'', channel:'📞 Call', desc:'Emergency ticket created manually', created:new Date().toISOString() });
+  save();
+  toast(`🚨 ${id} — Emergency ticket created! Supervisor alerted via WhatsApp + SMS!`, 'warn');
+  updateDashboardStats();
+}
+
+function exportTickets() {
+  const rows = [['Ticket ID','Name','Flat','Tower','Type','Priority','Status','Assigned To','Channel','Created']];
+  STATE.tickets.forEach(t => rows.push([t.id,t.name,t.flat,t.tower,t.type,t.priority,t.status,t.staff,t.channel,t.created]));
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'tickets_export.csv';
+  a.click();
+  toast('CSV exported!', 'success');
+}
+
+// ── ASSIGN MODAL ─────────────────────────────────────────────
+function openAssignModal(id) {
+  document.getElementById('assign-ticket-id').value = id || '';
+  document.getElementById('assign-notes').value = '';
+  const sel = document.getElementById('assign-staff-select');
+  sel.innerHTML = '<option value="">Select Staff</option>';
+  STATE.staff.forEach(s => {
+    const o = document.createElement('option'); o.value = s.name; o.textContent = `${s.name} (${s.role})`; sel.appendChild(o);
+  });
+  openModal('assignModal');
+}
+
+function confirmAssign() {
+  const id    = document.getElementById('assign-ticket-id').value;
+  const staff = document.getElementById('assign-staff-select').value;
+  if (!id) { toast('No ticket selected','warn'); return; }
+  if (!staff) { toast('Please select a staff member','warn'); return; }
+  const t = STATE.tickets.find(x => x.id === id);
+  if (t) { t.staff = staff; t.status = 'Assigned'; save(); }
+  toast(`✅ ${id} assigned to ${staff}. WhatsApp notification sent!`, 'success');
+  closeModal('assignModal');
+  renderTickets();
+  apiCall('assignTicket', { id, staff });
+}
+
+// ── STAFF ─────────────────────────────────────────────────────
+const STAFF_COLORS = ['#2563eb','#059669','#d97706','#7c3aed','#dc2626','#0891b2','#ea580c','#4338ca'];
+const ROLE_ICONS = { Plumber:'🔧', Electrician:'⚡', Security:'🛡️', Housekeeping:'🧹', Carpenter:'🪚', Supervisor:'📋', Other:'👤' };
+
+function renderStaff() {
+  const grid = document.getElementById('staffGrid');
+  document.getElementById('staffSubtitle').textContent = `${STATE.staff.length} staff members`;
+  if (!STATE.staff.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">👷</div><div class="empty-text">No staff added</div><div class="empty-sub">Add staff members or sync from Google Sheets</div></div>';
+    return;
+  }
+  grid.innerHTML = STATE.staff.map((s, i) => {
+    const initials = s.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const icon = ROLE_ICONS[s.role] || '👤';
+    const statusDot = s.status === 'Active' ? 'dot-green' : s.status === 'Part-time' ? 'dot-warn' : 'dot-gray';
+    const statusLabel = s.status === 'Active' ? 'On duty' : s.status;
+    return `<div class="staff-card" onclick="viewStaff('${s.id}')">
+      <div class="staff-av" style="background:${STAFF_COLORS[i%STAFF_COLORS.length]};">${initials}</div>
+      <div class="staff-name">${s.name}</div>
+      <div class="staff-role">${icon} ${s.role}</div>
+      <div class="staff-metrics">
+        <div style="text-align:center;"><div class="sm-val" style="color:var(--success);">${s.closed}</div><div class="sm-lbl">Closed</div></div>
+        <div style="text-align:center;"><div class="sm-val" style="color:var(--warn);">${s.open}</div><div class="sm-lbl">Open</div></div>
+        ${s.role !== 'Supervisor' ? `<div style="text-align:center;"><div class="sm-val" style="color:var(--accent);">${s.avgHrs}h</div><div class="sm-lbl">Avg</div></div>` : '<div style="text-align:center;"><div class="sm-val" style="color:var(--accent);">—</div><div class="sm-lbl">Avg</div></div>'}
+      </div>
+      <div class="status-dot" style="justify-content:center;">
+        <span class="dot ${statusDot}"></span>${statusLabel}
+      </div>
+      <div style="display:flex;gap:5px;margin-top:8px;justify-content:center;">
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();callStaff('${s.name}','${s.phone}')">📞</button>
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();sendWAToStaff('${s.name}','${s.phone}')">💬</button>
+        <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();removeStaff('${s.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // update staff performance on dashboard
+  renderStaffPerf();
+  populateAssignSelect();
+}
+
+function viewStaff(id) {
+  const s = STATE.staff.find(x => x.id === id);
+  if (!s) return;
+  toast(`${s.name} — ${s.role} · ${s.phone}`, 'info');
+}
+
+function callStaff(name, phone) { toast(`📞 Calling ${name} at ${phone}...`, 'info'); }
+function sendWAToStaff(name, phone) { toast(`💬 WhatsApp sent to ${name}`, 'success'); }
+function removeStaff(id) {
+  if (!confirm('Remove this staff member?')) return;
+  STATE.staff = STATE.staff.filter(s => s.id !== id);
+  save();
+  renderStaff();
+  toast('Staff member removed', 'info');
+}
+
+function addStaff() {
+  const name  = document.getElementById('ns-name').value.trim();
+  const role  = document.getElementById('ns-role').value;
+  const phone = document.getElementById('ns-phone').value.trim();
+  const status = document.getElementById('ns-status').value;
+  if (!name || !phone) { toast('Please fill Name and Phone', 'warn'); return; }
+  const id = 'S' + String(Date.now()).slice(-6);
+  STATE.staff.push({ id, name, role, phone, status, closed:0, open:0, avgHrs:0 });
+  save();
+  closeModal('addStaffModal');
+  renderStaff();
+  toast(`✅ ${name} added as ${role}`, 'success');
+  document.getElementById('ns-name').value = '';
+  document.getElementById('ns-phone').value = '';
+  apiCall('addStaff', { name, role, phone, status });
+}
+
+function exportStaff() {
+  const rows = [['ID','Name','Role','Phone','Status','Closed','Open','Avg Hrs']];
+  STATE.staff.forEach(s => rows.push([s.id, s.name, s.role, s.phone, s.status, s.closed, s.open, s.avgHrs]));
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a'); a.href = 'data:text/csv,' + encodeURIComponent(csv); a.download = 'staff.csv'; a.click();
+  toast('Staff exported', 'success');
+}
+
+function loadStaffFromSheet() {
+  toast('🔄 Syncing staff from Google Sheets...', 'info');
+  apiCall('getStaff', {}).then(data => {
+    if (data && data.staff) { STATE.staff = data.staff; save(); renderStaff(); toast('✅ Staff synced!', 'success'); }
+  }).catch(() => toast('Could not connect to Google Sheets. Using local data.', 'warn'));
+}
+
+function populateAssignSelect() {
+  const sel = document.getElementById('assign-staff-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select Staff</option>';
+  STATE.staff.forEach(s => { const o = document.createElement('option'); o.value = s.name; o.textContent = `${s.name} (${s.role})`; sel.appendChild(o); });
+}
+
+// ── RESIDENTS ────────────────────────────────────────────────
+let residentSearchVal = '', residentTowerFilter = '';
+
+function renderResidents() {
+  const tbody = document.getElementById('residentBody');
+  document.getElementById('residentSubtitle').textContent = `${STATE.residents.length} residents across ${STATE.towers.length} towers`;
+  const towerFilter = document.getElementById('residentTowerFilter')?.value || '';
+  let data = STATE.residents.filter(r => {
+    if (towerFilter && r.tower !== towerFilter) return false;
+    if (residentSearchVal) {
+      const q = residentSearchVal.toLowerCase();
+      return [r.name, r.flat, r.phone, r.tower].join(' ').toLowerCase().includes(q);
+    }
+    return true;
+  });
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🏠</div><div class="empty-text">No residents found</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(r => {
+    const openTickets = STATE.tickets.filter(t => t.flat === r.flat && (t.status === 'Open' || t.status === 'Assigned' || t.status === 'In Progress')).length;
+    return `<tr>
+      <td><strong>${r.flat}</strong></td>
+      <td>${r.tower}</td>
+      <td>${r.name}</td>
+      <td style="font-family:var(--mono);font-size:12px;">${r.phone}</td>
+      <td>${r.wa === 'Yes' ? '<span style="color:var(--success);font-weight:600;">✓ Active</span>' : '<span style="color:var(--muted);">✗ No</span>'}</td>
+      <td>${openTickets > 0 ? `<span class="badge ${openTickets > 1 ? 'b-emergency':'b-open'}">${openTickets}</span>` : '<span class="badge b-done">0</span>'}</td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-ghost btn-xs" onclick="viewResident('${r.flat}')">View</button>
+          <button class="btn btn-primary btn-xs" onclick="prefillResident('${r.flat}');go('helpline',null);">+ Ticket</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterResidents(v) { residentSearchVal = v; renderResidents(); }
+
+function viewResident(flat) {
+  const r = STATE.residents.find(x => x.flat === flat);
+  if (!r) return;
+  const tickets = STATE.tickets.filter(t => t.flat === flat);
+  document.getElementById('vr-body').innerHTML = `
+    <div class="ticket-meta-grid">
+      <div class="tmg-item"><div class="tmg-lbl">Name</div><div class="tmg-val">${r.name}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Flat</div><div class="tmg-val">${r.flat}, ${r.tower}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Phone</div><div class="tmg-val" style="font-family:var(--mono);">${r.phone}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">WhatsApp</div><div class="tmg-val">${r.wa}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Type</div><div class="tmg-val">${r.type || '—'}</div></div>
+      <div class="tmg-item"><div class="tmg-lbl">Total Tickets</div><div class="tmg-val">${tickets.length}</div></div>
+    </div>
+    ${tickets.length ? `<div class="form-label" style="margin-bottom:7px;">Recent Tickets</div>` + tickets.slice(0,3).map(t =>
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+        <span class="ticket-id">${t.id}</span>
+        <span style="font-size:12px;">${t.type}</span>
+        <span class="badge ${STATUS_BADGE[t.status]||'b-open'}">${t.status}</span>
+      </div>`
+    ).join('') : '<div style="color:var(--muted);font-size:13px;">No tickets yet</div>'}
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="initiateCall('${r.phone}')">📞 Call</button>
+      <button class="btn btn-success" style="flex:1;" onclick="sendWAUpdate('',r.name)">💬 WhatsApp</button>
+    </div>
+  `;
+  openModal('viewResidentModal');
+}
+
+function prefillResident(flat) {
+  const r = STATE.residents.find(x => x.flat === flat);
+  if (!r) return;
+  setTimeout(() => {
+    const tn = document.getElementById('nt-tower');
+    if (tn) { tn.value = r.tower; populateFlats('nt-tower','nt-flat'); setTimeout(() => { const fn = document.getElementById('nt-flat'); if (fn) fn.value = r.flat; }, 50); }
+    const nn = document.getElementById('nt-name'); if (nn) nn.value = r.name;
+  }, 100);
+}
+
+function addResident() {
+  const tower = document.getElementById('nr-tower').value;
+  const flat  = document.getElementById('nr-flat').value;
+  const name  = document.getElementById('nr-name').value.trim();
+  const phone = document.getElementById('nr-phone').value.trim();
+  const type  = document.getElementById('nr-type').value;
+  const wa    = document.getElementById('nr-wa').value;
+  if (!tower || !flat || !name || !phone) { toast('Please fill all fields', 'warn'); return; }
+  if (STATE.residents.find(r => r.flat === flat)) { toast('Flat already exists in directory', 'warn'); return; }
+  STATE.residents.push({ flat, tower, name, phone, type, wa });
+  save();
+  closeModal('addResidentModal');
+  renderResidents();
+  toast(`✅ ${name} (${flat}) added!`, 'success');
+  apiCall('addResident', { flat, tower, name, phone, type, wa });
+}
+
+function loadResidentsFromSheet() {
+  toast('🔄 Syncing residents from Google Sheets...', 'info');
+  apiCall('getResidents', {}).then(data => {
+    if (data && data.residents) { STATE.residents = data.residents; save(); renderResidents(); toast('✅ Residents synced!', 'success'); }
+  }).catch(() => toast('Could not connect. Using local data.', 'warn'));
+}
+
+// ── TOWER CONFIG ─────────────────────────────────────────────
+function renderTowerConfig() {
+  const tbody = document.getElementById('towerConfigBody');
+  if (!tbody) return;
+  tbody.innerHTML = STATE.towers.map(t => {
+    const total = t.floors * t.fpf;
+    return `<tr>
+      <td style="font-weight:600;">${t.name}</td>
+      <td>${t.floors}</td>
+      <td>${t.fpf}</td>
+      <td><span class="badge b-open">${total}</span></td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeTower('${t.name}')">Remove</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function addTower() {
+  const name  = document.getElementById('tc-name').value.trim();
+  const floors = parseInt(document.getElementById('tc-floors').value) || 0;
+  const fpf   = parseInt(document.getElementById('tc-fpf').value) || 0;
+  const prefix = document.getElementById('tc-prefix').value.trim();
+  if (!name || !floors || !fpf || !prefix) { toast('Fill all fields', 'warn'); return; }
+  if (STATE.towers.find(t => t.name === name)) { toast('Tower already exists', 'warn'); return; }
+  STATE.towers.push({ name, prefix, floors, fpf });
+  save();
+  closeModal('towerConfigModal');
+  renderTowerConfig();
+  populateTowerSelects();
+  toast(`✅ ${name} added (${floors * fpf} flats)`, 'success');
+  document.getElementById('tc-name').value = '';
+  document.getElementById('tc-floors').value = '';
+  document.getElementById('tc-fpf').value = '';
+  document.getElementById('tc-prefix').value = '';
+}
+
+function removeTower(name) {
+  if (!confirm(`Remove ${name}? This will not delete existing residents.`)) return;
+  STATE.towers = STATE.towers.filter(t => t.name !== name);
+  save(); renderTowerConfig(); populateTowerSelects(); toast(`${name} removed`, 'info');
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────
+function updateDashboardStats() {
+  const open   = STATE.tickets.filter(t => t.status === 'Open').length;
+  const inprog = STATE.tickets.filter(t => t.status === 'In Progress' || t.status === 'Assigned').length;
+  const done   = STATE.tickets.filter(t => t.status === 'Completed').length;
+  const emer   = STATE.tickets.filter(t => t.priority === 'emergency' && t.status !== 'Completed' && t.status !== 'Closed').length;
+  const total  = STATE.tickets.length;
+
+  setText('s-open', open); setText('s-inprog', inprog); setText('s-done', done);
+  setText('s-calls', '34'); setText('s-emer', emer); setText('s-avg', '4.2h');
+  setText('l-open', open); setText('l-inprog', inprog); setText('l-done', done);
+  setText('l-closed', STATE.tickets.filter(t=>t.status==='Closed').length);
+  setText('donutTotal', total);
+  setText('nb-tickets', open);
+  setText('nb-emergency', emer);
+  setText('emerCount', emer);
+
+  // Sub text
+  const cfg = getCFG();
+  setText('dash-sub', `${cfg.name || 'SAHABHAVANA TOWNSHIP'} — ${STATE.towers.reduce((a,t)=>a+t.floors*t.fpf,0)} Flats | ${STATE.towers.length} Towers`);
+
+  // Emergency banner
+  if (emer > 0) {
+    document.getElementById('emerBanner').style.display = 'flex';
+    setText('emerBannerTitle', `${emer} Active ${emer === 1 ? 'Emergency' : 'Emergencies'}`);
+    const emerTickets = STATE.tickets.filter(t => t.priority === 'emergency' && t.status !== 'Completed' && t.status !== 'Closed');
+    setText('emerBannerSub', emerTickets.map(t => `${t.flat}: ${t.type}`).join(' • '));
+  } else {
+    document.getElementById('emerBanner').style.display = 'none';
+  }
+
+  renderHeatmap();
+  renderActivityFeed();
+  renderStaffPerf();
+}
+
+function renderHeatmap() {
+  const el = document.getElementById('towerHeatmap');
+  if (!el) return;
+  el.innerHTML = STATE.towers.map(t => {
+    const cnt = STATE.tickets.filter(x => x.tower === t.name && (x.status === 'Open' || x.status === 'Assigned' || x.status === 'In Progress')).length;
+    const heatClass = cnt === 0 ? 'heat0' : cnt <= 2 ? 'heat1' : cnt <= 4 ? 'heat2' : 'heat3';
+    const total = t.floors * t.fpf;
+    return `<div class="tower-cell ${heatClass}" onclick="filterByTower('${t.name}')">
+      <div class="t-name">${t.name}</div>
+      <div class="t-count">${cnt}</div>
+      <div class="t-sub">${total} flats</div>
+    </div>`;
+  }).join('');
+}
+
+function filterByTower(tower) {
+  go('tickets', null);
+  document.querySelectorAll('#ticketFilters .chip').forEach(c => { c.classList.remove('active'); if (c.textContent.trim() === 'All') c.classList.add('active'); });
+  ticketFilterVal = 'all'; ticketSearchVal = tower;
+  const inp = document.getElementById('ticketSearch'); if (inp) inp.value = tower;
+  renderTickets();
+}
+
+function renderActivityFeed() {
+  const el = document.getElementById('activityFeed');
+  if (!el) return;
+  const recent = STATE.tickets.slice(0,5);
+  el.innerHTML = recent.map(t => {
+    const dotColor = t.priority === 'emergency' ? 'var(--danger)' : t.status === 'Completed' ? 'var(--success)' : t.status === 'Assigned' ? 'var(--warn)' : 'var(--accent)';
+    const action = t.status === 'Completed' ? `<strong>${t.id}</strong> closed — ${t.type} resolved ✓` :
+                   t.status === 'Assigned' ? `<strong>${t.id}</strong> assigned to ${t.staff}` :
+                   `<strong>${t.id}</strong> — ${t.type} at ${t.flat}`;
+    return `<div class="activity-item">
+      <div class="a-dot" style="background:${dotColor};"></div>
+      <div><div class="a-text">${action}</div><div class="a-time">${t.elapsedMin} min ago · ${t.channel} · ${t.flat}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderStaffPerf() {
+  const el = document.getElementById('staffPerf');
+  if (!el) return;
+  const staffWithTickets = STATE.staff.slice(0,5).filter(s => s.role !== 'Supervisor');
+  el.innerHTML = staffWithTickets.map(s => {
+    const total = s.closed + s.open || 1;
+    const pct = Math.round(s.closed / total * 100);
+    const cls = pct >= 80 ? 'prog-success' : pct >= 60 ? '' : 'prog-danger';
+    return `<div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12.5px;">
+        <span>${s.name} — ${s.role}</span>
+        <span style="font-weight:600;color:${pct>=80?'var(--success)':pct>=60?'var(--accent)':'var(--danger)'};">${s.closed}/${s.closed+s.open} closed</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill ${cls}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── CHART ─────────────────────────────────────────────────────
+const WEEK = [{d:'Mon',v:8},{d:'Tue',v:12},{d:'Wed',v:6},{d:'Thu',v:15},{d:'Fri',v:10},{d:'Sat',v:4},{d:'Sun',v:7}];
+function renderChart() {
+  const el = document.getElementById('weekChart');
+  if (!el) return;
+  const max = Math.max(...WEEK.map(x => x.v));
+  el.innerHTML = WEEK.map(w => `<div class="bar bar-blue" style="height:${w.v/max*100}%"><div class="bar-tip">${w.d}: ${w.v}</div></div>`).join('') +
+    '<div class="chart-labels">' + WEEK.map(w => `<div class="chart-label">${w.d}</div>`).join('') + '</div>';
+}
+
+// ── SETTINGS ─────────────────────────────────────────────────
+function getCFG() { return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }
+
+function loadSettingsForm() {
+  const cfg = getCFG();
+  setVal('cfg-name', cfg.name || 'SAHABHAVANA TOWNSHIP');
+  setVal('cfg-helpline', cfg.helpline || '1800-PSR-HELP');
+  setVal('cfg-towers', cfg.numTowers || STATE.towers.length);
+  setVal('cfg-flats', cfg.numFlats || '486');
+  setVal('cfg-city', cfg.city || 'Hyderabad, Telangana');
+  setVal('cfg-admin', cfg.adminName || 'Admin');
+  setVal('cfg-apiUrl', cfg.apiUrl || '');
+  renderTowerConfig();
+}
+
+function saveSettings() {
+  const cfg = {
+    name:       getVal('cfg-name'),
+    helpline:   getVal('cfg-helpline'),
+    numTowers:  getVal('cfg-towers'),
+    numFlats:   getVal('cfg-flats'),
+    city:       getVal('cfg-city'),
+    adminName:  getVal('cfg-admin'),
+    apiUrl:     getVal('cfg-apiUrl'),
+    ...getCFG(),
+  };
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  updateBrandStrings(cfg);
+  toast('✅ Settings saved!', 'success');
+}
+
+function updateBrandStrings(cfg) {
+  if (!cfg) cfg = getCFG();
+  setText('brandName', cfg.name || 'SAHABHAVANA');
+  setText('helplineDisplay', cfg.helpline || '1800-PSR-HELP');
+  setText('helperlineNum', cfg.helpline || '1800-PSR-HELP');
+  updatePortalStrings(cfg);
+}
+
+function updatePortalStrings(cfg) {
+  if (!cfg) cfg = getCFG();
+  setText('portalName', cfg.name || 'Sahabhavana');
+  setText('portalPhone', cfg.helpline || '1800-PSR-HELP');
+  setText('wa-township-name', (cfg.name || 'Sahabhavana').split(' ')[0]);
+}
+
+function testConnection() {
+  const url = getVal('cfg-apiUrl');
+  if (!url) { toast('Please enter Apps Script URL first', 'warn'); return; }
+  setText('connectionStatus', '⏳ Testing connection...');
+  fetch(url + '?action=ping').then(r => r.json()).then(d => {
+    setText('connectionStatus', '✅ Connected! ' + (d.status || ''));
+    setText('sheets-status', '6 sheets active'); setText('sheets-badge', 'Active');
+    document.getElementById('sheets-badge').className = 'badge b-done';
+    toast('✅ Google Sheets connected!', 'success');
+    const cfg = getCFG(); cfg.apiUrl = url; localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  }).catch(() => {
+    setText('connectionStatus', '❌ Connection failed. Check URL and re-deploy.');
+    toast('Connection failed. Make sure the Apps Script is deployed as a Web App.', 'warn');
+  });
+}
+
+function loadAllFromSheets() {
+  toast('🔄 Syncing all data...', 'info');
+  Promise.all([
+    apiCall('getResidents',{}),
+    apiCall('getStaff',{}),
+    apiCall('getTickets',{}),
+  ]).then(([residents, staff, tickets]) => {
+    if (residents?.residents) STATE.residents = residents.residents;
+    if (staff?.staff) STATE.staff = staff.staff;
+    if (tickets?.tickets) STATE.tickets = tickets.tickets;
+    save(); updateDashboardStats();
+    toast('✅ All data synced from Google Sheets!', 'success');
+  }).catch(() => toast('Sync failed. Check API URL in Settings.', 'warn'));
+}
+
+function saveSLAConfig() { closeModal('slaConfigModal'); toast('✅ SLA rules saved!', 'success'); }
+function saveWAConfig() { toast('✅ WhatsApp config saved!', 'success'); }
+
+// ── ACTIONS ───────────────────────────────────────────────────
+function initiateCall(phone) { toast(`📞 Initiating call to ${phone}...`, 'info'); window.open('tel:' + phone); }
+function sendWAUpdate(id, name) { toast(`💬 WhatsApp update sent${id?' for '+id:''}!`, 'success'); }
+function trackStaff(name) { toast(`📍 Tracking ${name} — last seen 5 min ago near Tower F`, 'info'); }
+function sendBroadcast() {
+  const msg = document.getElementById('broadcastMsg').value.trim();
+  const audience = document.getElementById('broadcastAudience').value;
+  if (!msg) { toast('Please enter a message', 'warn'); return; }
+  toast(`📤 Broadcast sent to ${audience}!`, 'success');
+}
+function applyTemplate(t) {
+  const templates = {
+    ticket_created: 'Your complaint #{id} has been registered. We will update you shortly.',
+    assigned: 'Your issue is now assigned to {staff}. ETA: {time}.',
+    resolved: 'Your complaint #{id} has been resolved. Please rate our service: ⭐⭐⭐⭐⭐',
+    emergency: 'URGENT: {type} at {location}. Please {action}.',
+    maintenance: 'Scheduled maintenance on {date} from {time}. Inconvenience regretted.',
+  };
+  const el = document.getElementById('broadcastMsg');
+  if (el && templates[t]) { el.value = templates[t]; toast('Template applied!', 'success'); }
+}
+
+// ── RESIDENT PORTAL ───────────────────────────────────────────
+function openResidentForm(type) {
+  document.getElementById('rm-title').textContent = (type==='Emergency'?'🚨 ':'🎫 ') + type + ' Complaint';
+  document.getElementById('rm-type').value = type;
+  // populate tower selects
+  const sel = document.getElementById('rm-tower');
+  sel.innerHTML = '<option value="">Select Tower</option>';
+  STATE.towers.forEach(t => { const o = document.createElement('option'); o.value = t.name; o.textContent = t.name; sel.appendChild(o); });
+  openModal('residentModal');
+}
+
+function submitResidentTicket() {
+  const name  = document.getElementById('rm-name').value.trim();
+  const tower = document.getElementById('rm-tower').value;
+  const flat  = document.getElementById('rm-flat').value;
+  const phone = document.getElementById('rm-phone').value.trim();
+  const type  = document.getElementById('rm-type').value;
+  const desc  = document.getElementById('rm-desc').value.trim();
+  if (!name || !tower || !flat) { toast('Please fill Name, Tower and Flat', 'warn'); return; }
+  const id = 'TKT-0' + (STATE.ticketCounter++).toString().padStart(3,'0');
+  STATE.tickets.unshift({ id, name, flat, tower, type, priority: type==='Emergency'?'emergency':'medium', status:'Open', slaMin:type==='Emergency'?120:480, elapsedMin:0, staff:'', channel:'🌐 Web Portal', desc:desc||type+' issue', created:new Date().toISOString() });
+  save(); closeModal('residentModal');
+  toast(`✅ ${id} registered! You'll receive WhatsApp updates.`, 'success');
+  updateDashboardStats();
+}
+
+function trackTicket() {
+  const val = document.getElementById('trackInput').value.trim().toUpperCase();
+  const t = STATE.tickets.find(x => x.id === val);
+  const res = document.getElementById('trackResult');
+  if (t) {
+    res.style.display = 'block';
+    setText('trackId', t.id);
+    setText('trackStatus', t.status);
+    document.getElementById('trackStatus').className = 'badge ' + (STATUS_BADGE[t.status] || 'b-open');
+    setText('trackIssue', t.type + ' — ' + t.tower + ', ' + t.flat);
+    setText('trackAssigned', t.staff ? `Assigned to: ${t.staff} · ETA: 2 hours` : 'Awaiting assignment');
+  } else {
+    res.style.display = 'none';
+    toast('Ticket not found. Check the ID and try again.', 'warn');
+  }
+}
+
+// ── EMERGENCY TIMERS ──────────────────────────────────────────
+function startTimers() {
+  let s1 = 134, s2 = 2842;
+  setInterval(() => {
+    s1++; s2++;
+    const fmt = s => [Math.floor(s/3600), Math.floor(s%3600/60), s%60].map(x=>String(x).padStart(2,'0')).join(':');
+    const e1 = document.getElementById('emer-t1'); if (e1) e1.textContent = fmt(s1);
+    const e2 = document.getElementById('emer-t2'); if (e2) e2.textContent = fmt(s2);
+  }, 1000);
+}
+
+// ── MODAL HELPERS ─────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Click outside modal to close
+document.addEventListener('click', e => {
+  document.querySelectorAll('.overlay.open').forEach(o => {
+    if (e.target === o) closeModal(o.id);
+  });
+  // Notif panel
+  const np = document.getElementById('notifPanel');
+  const nb = document.querySelector('.topbar-icon-btn');
+  if (np && !np.contains(e.target) && nb && !nb.contains(e.target)) np.classList.remove('open');
+});
+
+// ── TOAST ─────────────────────────────────────────────────────
+function toast(msg, type='success') {
+  const c = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type==='error'?'error':type==='warn'?'warn':type==='info'?'info':'');
+  const icon = type==='error'?'❌':type==='warn'?'⚠️':type==='info'?'ℹ️':'✅';
+  t.innerHTML = `<span>${icon}</span><span style="flex:1;">${msg}</span><span style="color:var(--muted);cursor:pointer;" onclick="this.parentElement.remove()">✕</span>`;
+  c.appendChild(t);
+  setTimeout(() => { if (t.parentElement) t.remove(); }, 4500);
+}
+
+// ── API CALL ──────────────────────────────────────────────────
+async function apiCall(action, data) {
+  const url = getCFG().apiUrl || '';
+  if (!url) return null;
+  try {
+    const r = await fetch(url, { method:'POST', body: JSON.stringify({ action, ...data }) });
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+// ── PERSIST ───────────────────────────────────────────────────
+function save() {
+  const cfg = getCFG();
+  cfg.towers = STATE.towers;
+  cfg.staff = STATE.staff;
+  cfg.residents = STATE.residents;
+  cfg.tickets = STATE.tickets;
+  cfg.ticketCounter = STATE.ticketCounter;
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function setVal(id, val)  { const el = document.getElementById(id); if (el) el.value = val; }
+function getVal(id)       { const el = document.getElementById(id); return el ? el.value : ''; }
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const cfg = getCFG();
+  updateBrandStrings(cfg);
+  populateTowerSelects();
+  updateDashboardStats();
+  renderChart();
+  startTimers();
+  if (cfg.apiUrl) {
+    loadAllFromSheets();
+  }
+});
+</script>
+</body>
+</html>
